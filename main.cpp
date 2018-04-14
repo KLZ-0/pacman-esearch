@@ -10,16 +10,15 @@ using namespace std;
 
 vector<string> getInstalled() { // only for full db
     vector<string> installed;
-    char path[1035];
-    FILE *fp;
+    string path;
 
-    fp = fopen("database-installed", "r");
-    if (fp == NULL) {cout << "Failed to open database!" << endl; exit(1);}
+    ifstream fp("database-installed");
+    if (!fp.is_open()) {cout << "Failed to open database!" << endl; exit(1);}
 
-    while (fgets(path, sizeof(path)-1, fp) != NULL) {
-        string str(path);
-        installed.push_back(path);
+    while (getline(fp, path)) {
+        installed.push_back(path + '\n');
     }
+    fp.close();
     return installed;
 }
 
