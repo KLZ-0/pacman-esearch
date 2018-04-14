@@ -13,11 +13,34 @@ It was developed for personal use but you can use and imporove it however you li
 >   - It can search by **regex** (pattern must be in quotes)
 >   - It can show detailed information about **multiple** packages at the same time unlike pacman -Si
 
+# Installation
+
+Compile from source
+
+`make`
+
+Install to /usr/bin/
+
+`make install`
+
+# Usage
+
+`eupdatedb [-q|--quiet]`
+
+-q, --quiet     displays nothing, just updates the databases - can be used in cron jobs or other scripts.
+
+
+`esearch <pkgname> [-I|-N]`
+
+-I              Find only packages which are installed
+
+-N              Find only packages which are NOT installed
+
 # WHY?
 
 I am a fan of Gentoo and when I turned to Arch, I missed the esearch functionality -- so here we go :)
 Why C++ ? -- Combining the two command in a shell script would be significantly slower (I tried it..)
 
 # Requirements
-> - **Arch linux and pacman** (obliviously)
+> - **Arch linux and pacman** (obliviously) - It uses pacman -Si and pacman -Qqe to fill up its databases
 > - **GCC g++ with -std=c++14**
