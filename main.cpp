@@ -42,7 +42,7 @@ void updateDB(vector<string> &data, char pattern[], unsigned char srcexp) { // e
             data.push_back(path);
             continue;
         }
-        if (regex_search(path,ex) && path[0] == 'N') {
+        if (regex_search(path.substr(path.find(':')+2),ex) && path[0] == 'N') {
             if (srcexp == 1 && std::find(installed.begin(), installed.end(), path.substr(path.find(':')+2)) == installed.end()) continue; // if explicitly installed and not find in installed then skip
             if (srcexp == 2 && std::find(installed.begin(), installed.end(), path.substr(path.find(':')+2)) != installed.end()) continue; // if explicitly NOTinstalled and find in installed then skip
             data.push_back(path);
