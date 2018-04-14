@@ -75,17 +75,17 @@ void printOut(vector<string> data) {
 
 int main(int argc, char* argv[]) {
     vector<string> db;
+    char* pattern = 0;
     unsigned char srcexp = 0;
-    if (argc < 2) {
-        cout << "\nesearch <pkgname>\n" << '\n';
-        return 0;
-    }
-    char* pattern = argv[1];
-    for (int i = 2; i < argc ; i++) {
+
+    if (argc < 2) { cout << "\nesearch <pkgname>\n" << '\n'; return 0; }
+    for (int i = 1; i < argc ; i++) {
         string option = argv[i];
         if (option == "-I") srcexp = 1;
-        if (option == "-N") srcexp = 2;
+        else if (option == "-N") srcexp = 2;
+        else pattern = argv[i];
     }
+    if (!pattern) {cout << "Pattern not found, check arguments.." << endl; return 1;}
 
     updateDB(db, pattern, srcexp);
     printOut(db);
