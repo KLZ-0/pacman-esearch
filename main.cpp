@@ -26,7 +26,7 @@ vector<string> getInstalled() { // only for full db
 
 void updateDB(vector<string> &data, char pattern[], unsigned char srcexp) { // eedit name and remove clear function
     data.clear();
-    string path;
+    string path, subpath;
 
     ifstream fp(home + "/.cache/esearch-database");
     if (!fp.is_open()) {cout << "Failed to open database!" << endl; exit(1);}
@@ -43,9 +43,10 @@ void updateDB(vector<string> &data, char pattern[], unsigned char srcexp) { // e
             data.push_back(path);
             continue;
         }
-        if (regex_search(path.substr(path.find(':')+2),ex) && path[0] == 'N') {
-            if (srcexp == 1 && std::find(installed.begin(), installed.end(), path.substr(path.find(':')+2)) == installed.end()) continue; // if explicitly installed and not find in installed then skip
-            if (srcexp == 2 && std::find(installed.begin(), installed.end(), path.substr(path.find(':')+2)) != installed.end()) continue; // if explicitly NOTinstalled and find in installed then skip
+        subpath = path.substr(path.find(':')+2);
+        if (regex_search(subpath.substr(0, subpath.size()-1),ex) && path[0] == 'N') {
+            if (srcexp == 1 && std::find(installed.begin(), installed.end(), subpath) == installed.end()) continue; // if explicitly installed and not find in installed then skip
+            if (srcexp == 2 && std::find(installed.begin(), installed.end(), subpath) != installed.end()) continue; // if explicitly NOTinstalled and find in installed then skip
             data.push_back(path);
             flag = true;
         }
@@ -58,7 +59,6 @@ void printOut(vector<string> data) {
     string header_color = "\033[38;5;46m";
     string normal_color = "\033[0m";
     string slight_color = "\033[38;5;34m";
-    string step_up      = "\033[A";
     vector<string> installed = getInstalled();
 
     cout << endl;
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
     char* pattern = 0;
     unsigned char srcexp = 0;
 
-    if (argc < 2) { cout << "\nesearch <pkgname>\n" << '\n'; return 0; }
+    if (argc < 2) { cout << "\nesearch <pkgname> [-I|-N]\n" << '\n'; return 0; }
     for (int i = 1; i < argc ; i++) {
         string option = argv[i];
         if (option == "-I") srcexp = 1;
