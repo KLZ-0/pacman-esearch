@@ -13,3 +13,10 @@ $(TARGET): main.cpp
 install:
 	$(INSTALL) -m 0755 $(TARGET) /usr/bin/$(TARGET)
 	$(INSTALL) -m 0755 eupdatedb /usr/bin/eupdatedb
+
+uninstall:
+	rm -f /usr/bin/$(TARGET)
+	rm -f /usr/bin/eupdatedb
+
+clean:
+	if [ -e $(TARGET) ]; then rm $(TARGET); fi
