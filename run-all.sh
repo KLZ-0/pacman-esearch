@@ -4,7 +4,13 @@ if [[ $# -eq 0 ]]; then
     echo "NO REGEX SPECIFIED!" && exit
 fi
 
-source ../../global.sh
+CC="g++"
+
+CFLAGS="-Wall -O2 -pipe -march=westmere -std=c++14"
+COMPILEDIR="./bin"
+
+CFILE="main.cpp"
+OUTFILE="$COMPILEDIR/main.o"
 
 if [ ! -d "$COMPILEDIR" ]; then
     mkdir $COMPILEDIR

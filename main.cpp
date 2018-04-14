@@ -5,66 +5,75 @@
 
 using namespace std;
 
-void updateDB(vector<string> &data, auto database) {
+void updateDB(vector<string> &data, char pattern[]) {
     data.clear();
     char path[1035];
     FILE *fp;
 
-    fp = fopen(database, "r");
+    fp = fopen("database", "r");
     if (fp == NULL) {
-        printf("Failed to run command\n" );
+        cout << "Failed to open database!" << endl;
         exit(1);
     }
 
     /* Read the output a line at a time - output it. */
+    bool flag = false;
+    regex ex(pattern);
     while (fgets(path, sizeof(path)-1, fp) != NULL) {
         string str(path);
-        data.push_back(path);
+        if (flag) {
+            if (path[0] != '\n') {data.push_back(path); continue;}
+            flag = false;
+            data.push_back(path);
+            continue;
+        }
+        if (regex_search(path,ex) && path[0] == 'N') {
+            data.push_back(path);
+            flag = true;
+        }
     }
     pclose(fp);
 }
 
 vector<string> getInstalled(vector<string> data) { // only for full db
     vector<string> installed;
-    bool flag = false;
     regex pattern("\\[installed\\]");
     for (string x : data) {
-        if (flag) {installed.push_back(x); flag=!flag; continue;}
         if (regex_search(x,pattern) && x[0] != ' ') {
             installed.push_back(x);
-            flag = !flag;
         }
     }
     return installed;
 }
 
-void printOut(vector<string> data, char pattern[]) {
-    string header_color = "\033[38;5;40m";
+void printOut(vector<string> data) {
+    string header_color = "\033[38;5;46m";
     string normal_color = "\033[0m";
-    string slight_color = "\033[38;5;28m";
+    string slight_color = "\033[38;5;34m";
 
-    bool flag = false;
-    regex ex(pattern);
+    cout << endl;
     for (string x : data) {
-        if (flag) {cout << slight_color << "      Description: " << header_color << x.substr(4) << normal_color << endl; flag=!flag; continue;}
-        if (regex_search(x,ex) && x[0] != ' ') {
-            cout << header_color << "*  " << x << normal_color;
-            flag = !flag;
-        }
+        if (x[0] == 'N') cout << header_color << "*  " << x.substr(x.find(':')+2) << normal_color;
+        else if (x[0] == ' ') cout << "      " << header_color << x << normal_color;
+        else cout << slight_color << "      " << x.substr(0, x.find(':')+1) << header_color << x.substr(x.find(':')+1) << normal_color;
     }
 }
 
 int main(int argc, char* argv[]) {
-    vector<string> data;
+    vector<string> db;
     if (argc < 2) {
         cout << "\nesearch <pkgname>\n" << '\n';
         return 0;
     }
-    else if (argc == 2) updateDB(data, "database");
-    else updateDB(data, "database-installed");
+    char* pattern = argv[1];
+    // for (int i = 2; i < argc ; i++) {
+    //     string option = argv[i];
+    //     if (option == "-i") db = getInstalled(db);
+    // }
 
-    // printOut(getInstalled(data), argv[1]);
-    printOut(data, argv[1]);
+    updateDB(db, pattern);
+    printOut(db);
+    cout << db.size() << '\n';
 
     return 0;
 }
