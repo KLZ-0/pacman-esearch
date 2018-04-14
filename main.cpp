@@ -8,11 +8,13 @@
 
 using namespace std;
 
+string home = getenv("HOME");
+
 vector<string> getInstalled() { // only for full db
     vector<string> installed;
     string path;
 
-    ifstream fp("database-installed");
+    ifstream fp(home + "/.cache/esearch-database-installed");
     if (!fp.is_open()) {cout << "Failed to open database!" << endl; exit(1);}
 
     while (getline(fp, path)) {
@@ -26,7 +28,7 @@ void updateDB(vector<string> &data, char pattern[], unsigned char srcexp) { // e
     data.clear();
     string path;
 
-    ifstream fp("database");
+    ifstream fp(home + "/.cache/esearch-database");
     if (!fp.is_open()) {cout << "Failed to open database!" << endl; exit(1);}
 
     /* Read the output a line at a time - output it. */
