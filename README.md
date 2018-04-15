@@ -48,5 +48,5 @@ I am a fan of Gentoo and when I turned to Arch, I missed the esearch functionali
 **Why C++ ?** -- Combining the two command in a shell script would be significantly slower (I tried it..)
 
 # Requirements
-> - **Arch linux and pacman** (obliviously) - It uses pacman -Si and pacman -Qqe to fill up its databases
+> - **Arch linux and pacman** (obviously) - It uses pacman -Si and pacman -Qqe to fill up its databases
 > - **GCC g++ with -std=c++14**
