@@ -6,6 +6,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: install dependencies
+          command: |
+            sudo apt-get install gcc make
+      - run:
           name: make
           command: g++ -Wall -O2 -pipe -march=x86-64 -std=c++14 main.cpp -o esearch
       - run:
