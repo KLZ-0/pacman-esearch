@@ -5,5 +5,3 @@ sudo: required
 install:
   - make
   - sudo make install
-
-script: make clean
