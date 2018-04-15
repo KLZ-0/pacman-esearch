@@ -1,5 +1,3 @@
-// TODO: where to put DB?
-
 #include <iostream>
 #include <vector>
 #include <stdio.h>
