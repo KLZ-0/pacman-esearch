@@ -2,8 +2,8 @@ language: cpp
 
 sudo: required
 
-script: make
-
 install:
   - make
   - sudo make install
+
+script: make clean
