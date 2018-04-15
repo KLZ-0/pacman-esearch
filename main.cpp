@@ -10,7 +10,7 @@ using namespace std;
 
 string home = getenv("HOME");
 
-vector<string> getInstalled() { // only for full db
+vector<string> getInstalled() {
     vector<string> installed;
     string path;
 
@@ -24,7 +24,7 @@ vector<string> getInstalled() { // only for full db
     return installed;
 }
 
-void updateDB(vector<string> &data, char pattern[], unsigned char srcexp) { // eedit name and remove clear function
+void loadDB(vector<string> &data, char pattern[], unsigned char srcexp) {
     data.clear();
     string path, subpath;
 
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
     }
     if (!pattern) {cout << "Pattern not found, check arguments.." << endl; return 1;}
 
-    updateDB(db, pattern, srcexp);
+    loadDB(db, pattern, srcexp);
     printOut(db);
 
     return 0;

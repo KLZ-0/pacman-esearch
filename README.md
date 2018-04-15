@@ -9,7 +9,7 @@ It was developed for personal use but you can use and imporove it however you li
 > - Combination of pacman search (lists all packages matching a pattern) and pacman info (prints verbose information about only one package)
 > - Using independent database which can be updated with the included eupdatedb script
 > - It does not support every feature of gentoo esearch, but:
->   - It can also search **explicitly** Installed || Not installed packages
+>   - It can search **explicitly** Installed || Not installed packages
 >   - It can search by **regex** (pattern must be in quotes)
 >   - It can show detailed information about **multiple** packages at the same time unlike pacman -Si
 
@@ -21,7 +21,9 @@ Compile from source
 
 Install to /usr/bin/
 
-`make install`
+`sudo make install`
+
+NOTE: databases are stored in $HOME/.cache/ on per-user basis so run eupdatedb as regular user[s] (the one[s] who will be using esearch) [For example the database for user "john" will be stored in /home/john/.cache/ or wherever the $HOME variable points]
 
 # Usage
 
