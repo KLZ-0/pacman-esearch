@@ -2,7 +2,7 @@ TARGET=esearch
 
 INSTALL=install
 
-CXX=g++
+# CXX=g++
 CXXFLAGS=-Wall -O2 -pipe -march=x86-64 -std=c++14
 
 all: $(TARGET)
