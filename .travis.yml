@@ -8,4 +8,4 @@ script: make
 
 install:
   - make
-  - make install
+  - sudo make install
