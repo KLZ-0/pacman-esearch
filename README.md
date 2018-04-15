@@ -18,11 +18,11 @@ It was developed for personal use but you can use and imporove it however you li
 
 # Installation
 
-Compile from source
+Compile from source:
 
 `make`
 
-Install to `/usr/bin/`
+Install to `/usr/bin/`:
 
 `sudo make install`
 
