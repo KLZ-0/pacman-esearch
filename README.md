@@ -1,5 +1,7 @@
 # pacman-esearch
 
+[![Build Status](https://travis-ci.org/KLZ-0/pacman-esearch.svg?branch=master)](https://travis-ci.org/KLZ-0/pacman-esearch)
+
 Basic replacement for both pacman -Ss and pacman -Si
 
 It was developed for personal use but you can use and imporove it however you like - if you find a bug, please open an issue
