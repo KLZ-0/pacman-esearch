@@ -2,10 +2,6 @@ language: cpp
 
 sudo: required
 
-install:
+script:
   - make
   - sudo make install
-
-script:
-  - make clean
-  - sudo make uninstall
