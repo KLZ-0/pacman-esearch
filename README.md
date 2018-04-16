@@ -41,9 +41,11 @@ If you no longer want esearch: `sudo make uninstall`
 
 **`esearch <pkgname> [-I|-N]`**
 
-`-I` Find only packages which are installed
+`--instonly, -I` Find only packages which are installed
 
-`-N` Find only packages which are NOT installed
+`--notinst, -N` Find only packages which are NOT installed
+
+`--nocolor, -n` Don't use ANSI codes for colored output
 
 # WHY?
 

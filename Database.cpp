@@ -54,11 +54,12 @@ void Database::loadDB(char pattern[], unsigned char srcexp) {
     fp.close();
 }
 
-void Database::printOut() {
+void Database::printOut(bool colored) {
     string important_color = "\033[1;31m";
     string header_color = "\033[38;5;46m";
     string normal_color = "\033[0m";
     string slight_color = "\033[38;5;34m";
+    if (!colored) important_color = header_color = normal_color = slight_color = "";
 
     cout << endl;
     for (string x : db) {

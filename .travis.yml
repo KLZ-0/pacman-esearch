@@ -5,3 +5,5 @@ sudo: required
 script:
   - make
   - sudo make install
+  - sudo make uninstall
+  - make clean

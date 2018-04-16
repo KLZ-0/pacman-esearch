@@ -6,5 +6,5 @@ public:
     Database(char pattern[], unsigned char srcexp);
     void loadInstalled();
     void loadDB(char pattern[], unsigned char srcexp);
-    void printOut();
+    void printOut(bool colored);
 };
