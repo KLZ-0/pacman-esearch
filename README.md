@@ -49,4 +49,4 @@ I am a fan of Gentoo and when I turned to Arch, I missed the esearch functionali
 
 # Requirements
 > - **Arch linux and pacman** (obviously) - It uses pacman -Si and pacman -Qqe to fill up its databases
-> - **GCC g++ with -std=c++14**
+> - **GCC g++ with -std=c++11** (or -std=c++14)

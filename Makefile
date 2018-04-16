@@ -1,14 +1,21 @@
-TARGET=esearch
+TARGET = esearch
 
-INSTALL=install
+INSTALL = install
+# CXX = g++ -pthread
+CXXFLAGS = -Wall -O2 -pipe -march=x86-64 -std=c++11
 
-# CXX=g++
-CXXFLAGS=-Wall -O2 -pipe -march=x86-64 -std=c++11
+
 
 all: $(TARGET)
 
-$(TARGET): main.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $@
+$(TARGET): main.o Database.o
+	$(CXX) $^ -o $@
+
+main.o: main.cpp
+	$(CXX) $(CXXFLAGS) -c $<
+
+Database.o: Database.cpp Database.h
+	$(CXX) $(CXXFLAGS) -c $<
 
 install:
 	$(INSTALL) -m 0755 $(TARGET) /usr/bin/$(TARGET)
@@ -19,4 +26,4 @@ uninstall:
 	rm -f /usr/bin/eupdatedb
 
 clean:
-	if [ -e $(TARGET) ]; then rm $(TARGET); fi
+	rm -f *.o $(TARGET)
