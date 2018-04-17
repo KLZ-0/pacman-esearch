@@ -14,39 +14,39 @@ Database::Database(char pattern[], unsigned char srcexp) {
 
 void Database::loadInstalled() {
     installed.clear();
-    string path;
+    string line;
 
     ifstream fp(home + "/.cache/esearch-database-installed");
     if (!fp.is_open()) {cout << "Failed to open database!" << endl; exit(1);}
 
-    while (getline(fp, path)) {
-        installed.push_back(path + '\n');
+    while (getline(fp, line)) {
+        installed.push_back(line + '\n');
     }
     fp.close();
 }
 
 void Database::loadDB(char pattern[], unsigned char srcexp) {
     db.clear();
-    string path, subpath;
+    string line, subline;
 
     ifstream fp(home + "/.cache/esearch-database");
     if (!fp.is_open()) {cout << "Failed to open database!" << endl; exit(1);}
 
     bool flag = false;
     regex ex(pattern);
-    while (getline(fp, path)) {
-        path += "\n";
+    while (getline(fp, line)) {
+        line += "\n";
         if (flag) {
-            if (path[0] != '\n') {db.push_back(path); continue;}
+            if (line[0] != '\n') {db.push_back(line); continue;}
             flag = false;
-            db.push_back(path);
+            db.push_back(line);
             continue;
         }
-        subpath = path.substr(path.find(':')+2);
-        if (regex_search(subpath.substr(0, subpath.size()-1),ex) && path[0] == 'N') {
-            if (srcexp == 1 && std::find(installed.begin(), installed.end(), subpath) == installed.end()) continue; // if explicitly installed and not find in installed then skip
-            if (srcexp == 2 && std::find(installed.begin(), installed.end(), subpath) != installed.end()) continue; // if explicitly NOTinstalled and find in installed then skip
-            db.push_back(path);
+        subline = line.substr(line.find(':')+2);
+        if (regex_search(subline.substr(0, subline.size()-1),ex) && line[0] == 'N') {
+            if (srcexp == 1 && std::find(installed.begin(), installed.end(), subline) == installed.end()) continue; // if explicitly installed and not find in installed then skip
+            if (srcexp == 2 && std::find(installed.begin(), installed.end(), subline) != installed.end()) continue; // if explicitly NOTinstalled and find in installed then skip
+            db.push_back(line);
             flag = true;
         }
     }
@@ -61,15 +61,15 @@ void Database::printOut(bool colored) {
     if (!colored) important_color = header_color = normal_color = slight_color = "";
 
     cout << endl;
-    for (string x : db) {
-        if (x[0] == 'N') {
-            x = x.substr(x.find(':')+2);
-            cout << header_color << "*  " << x.substr(0, x.size()-1);
-            if (std::find(installed.begin(), installed.end(), x) != installed.end()) {
+    for (string line : db) {
+        if (line[0] == 'N') {
+            line = line.substr(line.find(':')+2);
+            cout << header_color << "*  " << line.substr(0, line.size()-1);
+            if (std::find(installed.begin(), installed.end(), line) != installed.end()) {
                 cout << important_color << " [ installed ] \n" << normal_color;
             } else cout << endl;
         }
-        else if (x[0] == ' ') cout << "      " << header_color << x << normal_color;
-        else cout << slight_color << "      " << x.substr(0, x.find(':')+1) << header_color << x.substr(x.find(':')+1) << normal_color;
+        else if (line[0] == ' ') cout << "      " << header_color << line << normal_color;
+        else cout << slight_color << "      " << line.substr(0, line.find(':')+1) << header_color << line.substr(line.find(':')+1) << normal_color;
     }
 }
