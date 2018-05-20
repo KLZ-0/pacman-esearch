@@ -48,6 +48,10 @@ If you no longer want esearch: `sudo make uninstall`
 
 `--nocolor, -n` Don't use ANSI codes for colored output
 
+`--version, -v` Show version
+
+`--help, -h` Show help message
+
 # WHY?
 
 I am a fan of Gentoo and when I turned to Arch, I missed the esearch functionality -- so here we go :)
