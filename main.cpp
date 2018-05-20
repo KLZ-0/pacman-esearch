@@ -4,6 +4,10 @@
 
 using namespace std;
 
+#ifndef VERSION
+#define VERSION 1.01
+#endif
+
 int main(int argc, char* argv[]) {
     char* pattern = 0;
     unsigned char srcexp = 0;
@@ -15,6 +19,7 @@ int main(int argc, char* argv[]) {
         if (option == "-n" || option == "--nocolor") colored = false;
         else if (option == "-I" || option == "--instonly") srcexp = 1;
         else if (option == "-N" || option == "--notinst") srcexp = 2;
+        else if (option == "-v" || option == "--version") {cout << VERSION << endl; return 0;}
         else pattern = argv[i];
     }
     if (!pattern) {cout << "Pattern not found, check arguments.." << endl; return 1;}
