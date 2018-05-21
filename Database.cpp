@@ -44,8 +44,8 @@ void Database::loadDB(char pattern[], unsigned char srcexp) {
         }
         subline = line.substr(line.find(':')+2);
         if (regex_search(subline.substr(0, subline.size()-1),ex) && line[0] == 'N') {
-            if (srcexp == 1 && std::find(installed.begin(), installed.end(), subline) == installed.end()) continue; // if explicitly installed and not find in installed then skip
-            if (srcexp == 2 && std::find(installed.begin(), installed.end(), subline) != installed.end()) continue; // if explicitly NOTinstalled and find in installed then skip
+            if (srcexp == 1 && find(installed.begin(), installed.end(), subline) == installed.end()) continue; // if explicitly installed and not find in installed then skip
+            if (srcexp == 2 && find(installed.begin(), installed.end(), subline) != installed.end()) continue; // if explicitly NOTinstalled and find in installed then skip
             db.push_back(line);
             flag = true;
         }
@@ -65,7 +65,7 @@ void Database::printOut(bool colored) {
         if (line[0] == 'N') {
             line = line.substr(line.find(':')+2);
             cout << header_color << "*  " << line.substr(0, line.size()-1);
-            if (std::find(installed.begin(), installed.end(), line) != installed.end()) {
+            if (find(installed.begin(), installed.end(), line) != installed.end()) {
                 cout << important_color << " [ installed ] \n" << normal_color;
             } else cout << endl;
         }

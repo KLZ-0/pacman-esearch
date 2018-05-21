@@ -9,13 +9,15 @@ using namespace std;
 #endif
 
 void help() {
-    cout << "\nesearch <pkgname> [options]\n\
+    cout << "\
+esearch (" << VERSION <<") - Replacement for both pacman -Ss and pacman -Si\n\n\
+esearch <pkgname> [options]\n\
     --instonly, -I\tFind only packages which are installed\n\
     --notinst, -N\tFind only packages which are NOT installed\n\
     --nocolor, -n\tDon't use ANSI codes for colored output\n\
     --version, -v\tShow version\n\
-    --help, -h\tShow this message\n\
-    " << endl;
+    --help, -h\t\tShow this message\n\
+" << endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -31,6 +33,7 @@ int main(int argc, char* argv[]) {
         else if (option == "-N" || option == "--notinst") srcexp = 2;
         else if (option == "-v" || option == "--version") { cout << VERSION << endl; return 0; }
         else if (option == "-h" || option == "--help") { help(); return 0; }
+        else if (option[0] == '-') { cout << "unknown option!" << endl; return 1; }
         else pattern = argv[i];
     }
     if (!pattern) {cout << "Pattern not found, check arguments.." << endl; return 1;}

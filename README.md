@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/KLZ-0/pacman-esearch.svg?branch=master)](https://travis-ci.org/KLZ-0/pacman-esearch)
 
-Basic replacement for both pacman -Ss and pacman -Si
+Replacement for both pacman -Ss and pacman -Si
 
-It was developed for personal use but you can use and imporove it however you like - if you find a bug, please open an issue
+It was created for personal use but it can be customized and imporoved however you like - if you find a bug, please open an issue
 
 # Features
 
@@ -27,7 +27,7 @@ Install to `/usr/bin/`:
 
 `sudo make install`
 
-NOTE: databases are stored in `$HOME/.cache/` on per-user basis so run eupdatedb as regular user[s] (the one[s] who will be using esearch) -- For example the database for user `john` will be stored in `/home/john/.cache/` or wherever the `$HOME` variable points
+NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eupdatedb as regular user (the one who will be using esearch) -- For example the database for user `john` will be stored in `/home/john/.cache/` or wherever the `$HOME` variable points
 
 Optionally remove redundant objects: `make clean`
 
