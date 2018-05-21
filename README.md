@@ -10,7 +10,7 @@ It was created for personal use but it can be customized and imporoved however y
 
 > - Prints output similarly to esearch -- Gentoo like experience ;)
 > - Combination of pacman search (lists all packages matching a pattern) and pacman info (prints verbose information about a package)
-> - Using independent database which can be updated with the included eupdatedb script
+> - Using a search index which can be updated with the included eupdatedb script
 > - It does not support every feature of gentoo esearch, but:
 >   - It can search **explicitly** Installed || Not installed packages
 >   - It can search by **regex**
@@ -27,7 +27,7 @@ Install to `/usr/bin/`:
 
 `sudo make install`
 
-NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eupdatedb as regular user (the one who will be using esearch) -- For example the database for user `john` will be stored in `/home/john/.cache/` or wherever the `$HOME` variable points
+NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eupdatedb as regular user (the one who will be using esearch) -- For example the search index for user `john` will be stored in `/home/john/.cache/` or wherever the `$HOME` variable points
 
 Optionally remove redundant objects: `make clean`
 
@@ -37,7 +37,7 @@ If you no longer want esearch: `sudo make uninstall`
 
 **`eupdatedb [-q|--quiet]`**
 
-`-q, --quiet`     displays nothing, just updates the databases - can be used in cron jobs or other scripts.
+`-q, --quiet`     displays nothing, just updates the search index - can be used in cron jobs or other scripts (Don't forget to set the HOME variable explicitly when the system crontab is used).
 
 
 **`esearch <pkgname> [-I|-N|-n]`**
