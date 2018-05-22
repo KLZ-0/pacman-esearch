@@ -7,9 +7,9 @@ using namespace std;
 
 string home = getenv("HOME");
 
-Database::Database(char pattern[], unsigned char srcexp) {
+Database::Database(char pattern[], unsigned char srcexp, bool searchdesc) {
     loadInstalled();
-    loadDB(pattern, srcexp);
+    loadDB(pattern, srcexp, searchdesc);
 }
 
 void Database::loadInstalled() {
@@ -25,15 +25,16 @@ void Database::loadInstalled() {
     fp.close();
 }
 
-void Database::loadDB(char pattern[], unsigned char srcexp) {
+void Database::loadDB(char pattern[], unsigned char srcexp, bool searchdesc) {
     db.clear();
     string line, subline;
 
     ifstream fp(home + "/.cache/esearch-database");
     if (!fp.is_open()) {cout << "Failed to open database!" << endl; exit(1);}
 
+    vector<string> backupline;
     bool flag = false;
-    regex ex(pattern);
+    regex ex(pattern, regex_constants::icase);
     while (getline(fp, line)) {
         line += "\n";
         if (flag) {
@@ -43,11 +44,28 @@ void Database::loadDB(char pattern[], unsigned char srcexp) {
             continue;
         }
         subline = line.substr(line.find(':')+2);
-        if (regex_search(subline.substr(0, subline.size()-1),ex) && line[0] == 'N') {
+        if (line[0] == 'N' && regex_search(subline.substr(0, subline.size()-1),ex)) {
             if (srcexp == 1 && find(installed.begin(), installed.end(), subline) == installed.end()) continue; // if explicitly installed and not find in installed then skip
             if (srcexp == 2 && find(installed.begin(), installed.end(), subline) != installed.end()) continue; // if explicitly NOTinstalled and find in installed then skip
             db.push_back(line);
             flag = true;
+        }
+        else if (searchdesc && ((line[0] == 'D' && line[2] == 's') && regex_search(subline.substr(0, subline.size()-1),ex))) {
+            subline = backupline[0].substr(backupline[0].find(':')+2);
+            if (srcexp == 1 && find(installed.begin(), installed.end(), subline) == installed.end()) continue; // if explicitly installed and not find in installed then skip
+            if (srcexp == 2 && find(installed.begin(), installed.end(), subline) != installed.end()) continue; // if explicitly NOTinstalled and find in installed then skip
+            db.push_back(backupline[0]);
+            db.push_back(backupline[1]);
+            db.push_back(line);
+            flag = true;
+        }
+        else if (searchdesc && (line[0] == 'N' || line[0] == 'V')) {
+            backupline.push_back(line);
+        }
+        else {
+            if (backupline.size() > 0) {
+                backupline.clear();
+            }
         }
     }
     fp.close();

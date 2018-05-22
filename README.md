@@ -40,13 +40,15 @@ If you no longer want esearch: `sudo make uninstall`
 `-q, --quiet`     displays nothing, just updates the search index - can be used in cron jobs or other scripts (Don't forget to set the HOME variable explicitly when the system crontab is used).
 
 
-**`esearch <pkgname> [-I|-N|-n]`**
+**`esearch [options] <pattern>`**
 
 `--instonly, -I` Find only packages which are installed
 
 `--notinst, -N` Find only packages which are NOT installed
 
 `--nocolor, -n` Don't use ANSI codes for colored output
+
+`--searchdesc, -S` Search also in package description
 
 `--version, -v` Show version
 
