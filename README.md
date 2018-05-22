@@ -8,14 +8,14 @@ It was created for personal use but it can be customized and imporoved however y
 
 # Features
 
-> - Prints output similarly to esearch -- Gentoo like experience ;)
-> - Combination of pacman search (lists all packages matching a pattern) and pacman info (prints verbose information about a package)
-> - Using a search index which can be updated with the included eupdatedb script
-> - It does not support every feature of gentoo esearch, but:
->   - It can search **explicitly** Installed || Not installed packages
->   - It can search by **regex**
->   - It can show detailed information about **multiple** packages at the same time unlike pacman -Si
->   - It can display **colored** output using ANSI codes
+- Prints output similarly to esearch -- Gentoo like experience ;)
+- Combination of pacman search (lists all packages matching a pattern) and pacman info (prints verbose information about a package)
+- Using a search index which can be updated with the included eupdatedb script
+- It does not support every feature of gentoo esearch, but:
+  - It can search **explicitly** Installed || Not installed packages
+  - It can search by **regex**
+  - It can show detailed information about **multiple** packages at the same time unlike pacman -Si
+  - It can display **colored** output using ANSI codes
 
 # Installation
 
@@ -61,5 +61,5 @@ I am a fan of Gentoo and when I turned to Arch, I missed the esearch functionali
 **Why C++ ?** -- Combining the two command in a shell script would be significantly slower (I tried it..)
 
 # Requirements
-> - **Arch linux and pacman** (obviously) - It uses pacman -Si and pacman -Qqe to fill up its databases
-> - **GCC g++ with -std=c++11** (or -std=c++14) - already present in most cases
+- **Arch linux and pacman** (obviously) - It uses pacman -Si and pacman -Qqe to fill up its databases
+- **GCC g++ with -std=c++11** (or -std=c++14) - already present in most cases
