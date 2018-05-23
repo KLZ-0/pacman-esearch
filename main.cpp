@@ -10,7 +10,7 @@ using namespace std;
 
 void help() {
     cout << "\
-esearch (" << VERSION <<") - Replacement for both pacman -Ss and pacman -Si\n\n\
+pacman-esearch (" << VERSION <<") - Replacement for both pacman -Ss and pacman -Si\n\n\
 esearch <pkgname> [options]\n\
     --instonly, -I\tFind only packages which are installed\n\
     --notinst, -N\tFind only packages which are NOT installed\n\
