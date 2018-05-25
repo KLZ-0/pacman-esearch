@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
         else if (option == "-N" || option == "--notinst") srcexp = 2;
         else if (option == "-v" || option == "--version") { cout << VERSION << endl; return 0; }
         else if (option == "-h" || option == "--help") { help(); return 0; }
-        else if (option[0] == '-') { cout << "unknown option!" << endl; return 1; }
+        else if (option[0] == '-') { cout << "unknown option! see --help for all options" << endl; return 1; }
         else pattern = argv[i];
     }
     if (!pattern) {cout << "Pattern not found, check arguments.." << endl; return 1;}
