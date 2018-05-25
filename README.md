@@ -56,7 +56,7 @@ If you no longer want esearch: `sudo make uninstall`
 
 # WHY?
 
-I am a fan of Gentoo and when I turned to Arch, I missed the esearch functionality -- so here we go :)
+I am a fan of Gentoo and when I started to use Arch on my laptop, I missed [esearch](https://github.com/fuzzyray/esearch) and I wasn't happy with the search capabilities of pacman - so here it is.. enjoy
 
 **Why C++ ?** -- Combining the two command in a shell script would be significantly slower (I tried it..)
 
