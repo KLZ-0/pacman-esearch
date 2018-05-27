@@ -27,6 +27,10 @@ Install to `/usr/bin/`:
 
 `sudo make install`
 
+Create the search index:
+
+`eupdatedb`
+
 NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eupdatedb as regular user (the one who will be using esearch) -- For example the search index for user `john` will be stored in `/home/john/.cache/` or wherever the `$HOME` variable points
 
 Optionally remove redundant objects: `make clean`
@@ -53,6 +57,11 @@ If you no longer want esearch: `sudo make uninstall`
 `--version, -v` Show version
 
 `--help, -h` Show help message
+
+# FAQ
+
+Q: I am getting `Failed to open database!` whenever I run esearch.
+A: This error means esearch can't find the search index, check if it exists in the desired location or run `eupdatedb`. Optionally check if you have write permissions in `~/.cache/`.
 
 # WHY?
 
