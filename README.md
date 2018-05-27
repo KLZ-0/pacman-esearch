@@ -61,6 +61,7 @@ If you no longer want esearch: `sudo make uninstall`
 # FAQ
 
 Q: I am getting `Failed to open database!` whenever I run esearch.
+
 A: This error means esearch can't find the search index, check if it exists in the desired location or run `eupdatedb`. Optionally check if you have write permissions in `~/.cache/`.
 
 # WHY?
