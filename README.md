@@ -4,18 +4,17 @@
 
 Replacement for both pacman -Ss and pacman -Si
 
-It was created for personal use but it can be customized and imporoved however you like - if you find a bug, please open an issue
-
 # Features
 
-- Prints output similarly to esearch -- Gentoo like experience ;)
+- Output similar to esearch
 - Combination of pacman search (lists all packages matching a pattern) and pacman info (prints verbose information about a package)
-- Using a search index which can be updated with the included eupdatedb script
+- It uses a search index which can be updated with the included eupdatedb script
 - It does not support every feature of gentoo esearch, but:
-  - It can search **explicitly** Installed || Not installed packages
-  - It can search by **regex**
+  - It can search **explicitly Installed or NOT installed**
+  - It **supports regex**
   - It can show detailed information about **multiple** packages at the same time unlike pacman -Si
-  - It can display **colored** output using ANSI codes
+  - It supports **colored output using ANSI codes** by default - there is also an option to disable it
+  - it can search optionally also in **descriptions**
 
 # Installation
 
@@ -64,9 +63,9 @@ Q: I am getting `Failed to open database!` whenever I run esearch.
 
 A: This error means esearch can't find the search index, check if it exists in the desired location or run `eupdatedb`. Optionally check if you have write permissions in `~/.cache/`.
 
-# WHY?
+Q: Why was it created?
 
-I am a fan of Gentoo and when I started to use Arch on my laptop, I missed [esearch](https://github.com/fuzzyray/esearch) and I wasn't happy with the search capabilities of pacman - so here it is.. enjoy
+A: I am a fan of Gentoo and when I started to use Arch on my laptop, I missed [esearch](https://github.com/fuzzyray/esearch) and I wasn't happy with the search capabilities of pacman
 
 **Why C++ ?** -- Combining the two command in a shell script would be significantly slower (I tried it..)
 
