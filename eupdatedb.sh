@@ -17,4 +17,6 @@ test $quiet -eq 0 && echo -e "\033[1;34m [1/2] \033[0m Gathering installed datab
 pacman -Qqe > $HOME/.cache/esearch-database-installed || echo " * eupdatedb: Failed to load/save database"
 test $quiet -eq 0 && echo -e "\033[1;34m [2/2] \033[0m Gathering global database.."
 pacman -Si > $HOME/.cache/esearch-database || echo " * eupdatedb: Failed to load/save database"
-test $quiet -eq 0 && echo -e "\033[1;33m *** \033[0m eupdatedb finished successfully with $(pacman -Ssq | wc -l) global and $(pacman -Qqe | wc -l) installed packages"
+
+test $quiet -eq 0 && echo -e "\033[1;33m *** \033[0m eupdatedb finished successfully with $(pacman -Ssq | wc -l) global and $(pacman -Qqe | wc -l) installed packages\nSize of search index:"
+test $quiet -eq 0 && du -sh $HOME/.cache/esearch-database $HOME/.cache/esearch-database-installed
