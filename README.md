@@ -22,7 +22,7 @@ Compile from source:
 
 `make`
 
-Install to `/usr/bin/`:
+Install to `/usr/local/bin/`:
 
 `sudo make install`
 
