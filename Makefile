@@ -18,12 +18,12 @@ Database.o: Database.cpp Database.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 install:
-	$(INSTALL) -m 0755 $(TARGET) /usr/bin/$(TARGET)
-	$(INSTALL) -m 0755 eupdatedb.sh /usr/bin/eupdatedb
+	$(INSTALL) -m 0755 $(TARGET) /usr/local/bin/$(TARGET)
+	$(INSTALL) -m 0755 eupdatedb.sh /usr/local/bin/eupdatedb
 
 uninstall:
-	rm -f /usr/bin/$(TARGET)
-	rm -f /usr/bin/eupdatedb
+	rm -f /usr/local/bin/$(TARGET)
+	rm -f /usr/local/bin/eupdatedb
 
 clean:
 	rm -f *.o $(TARGET)
