@@ -25,7 +25,7 @@ Clone this repository and cd into it:
 
 Execute cmake and compile from source:
 
-`cmake -S ./ -B ./build && make -C build/`
+`cmake -B ./build ./ && make -C build/`
 
 Install to `/usr/local/bin/`:
 

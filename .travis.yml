@@ -3,6 +3,4 @@ language: cpp
 sudo: required
 
 script:
-  - cmake -S ./ -B ./build
-  - make -C build/
-  - sudo make install -C build/
+  - cmake -B ./build ./ && make -C ./build/ && sudo make install -C ./build/
