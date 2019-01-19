@@ -1,2 +1,1 @@
-esearch
-*.o
+build/*

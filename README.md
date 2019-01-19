@@ -18,23 +18,24 @@ Replacement for both pacman -Ss and pacman -Si
 
 # Installation
 
-Compile from source:
+Clone this repository and cd into it:
 
-`make`
+`git clone https://github.com/KLZ-0/pacman-esearch.git && cd pacman-esearch`
+
+
+Execute cmake and compile from source:
+
+`cmake -S ./ -B ./build && make -C build/`
 
 Install to `/usr/local/bin/`:
 
-`sudo make install`
+`sudo make install -C build/`
 
 Create the search index:
 
 `eupdatedb`
 
-NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eupdatedb as regular user (the one who will be using esearch) -- For example the search index for user `john` will be stored in `/home/john/.cache/` or wherever the `$HOME` variable points
-
-Optionally remove redundant objects: `make clean`
-
-If you no longer want esearch: `sudo make uninstall`
+NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eupdatedb as regular user (the one who will be using esearch) -- For example the search index for user `john` will be stored in `/home/john/.cache/` or whatever the `$HOME` variable points at
 
 # Usage
 
@@ -70,5 +71,5 @@ A: I am a fan of Gentoo and when I started to use Arch on my laptop, I missed [e
 **Why C++ ?** -- Combining the two command in a shell script would be significantly slower (I tried it..)
 
 # Requirements
-- **Arch linux and pacman** (obviously) - It uses pacman -Si and pacman -Qqe to fill up its databases
-- **GCC g++ with -std=c++11** (or -std=c++14) - already present in most cases
+- **Arch linux and pacman** (obviously) - It uses pacman -Si and pacman -Qqe to fill up its database
+- **GCC g++ with -std=c++11** - already present in most cases

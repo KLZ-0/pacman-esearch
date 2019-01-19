@@ -3,7 +3,6 @@ language: cpp
 sudo: required
 
 script:
-  - make
-  - sudo make install
-  - sudo make uninstall
-  - make clean
+  - cmake -S ./ -B ./build
+  - make -C build/
+  - sudo make install -C build/
