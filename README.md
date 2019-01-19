@@ -18,6 +18,12 @@ Replacement for both pacman -Ss and pacman -Si
 
 # Installation
 
+## From AUR
+
+`git clone https://aur.archlinux.org/esearch.git && cd esearch && makepkg -si`
+
+## From source
+
 Clone this repository and cd into it:
 
 `git clone https://github.com/KLZ-0/pacman-esearch.git && cd pacman-esearch`

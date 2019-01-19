@@ -17,7 +17,7 @@ void Database::loadInstalled() {
     string line;
 
     ifstream fp(home + "/.cache/esearch-database-installed");
-    if (!fp.is_open()) {cout << "Failed to open database!" << endl; exit(1);}
+    if (!fp.is_open()) {cout << "Failed to open database! - Please run 'eupdatedb' first." << endl; exit(1);}
 
     while (getline(fp, line)) {
         installed.push_back(line + '\n');
@@ -30,7 +30,7 @@ void Database::loadDB(char pattern[], unsigned char srcexp, bool searchdesc) {
     string line, subline;
 
     ifstream fp(home + "/.cache/esearch-database");
-    if (!fp.is_open()) {cout << "Failed to open database!" << endl; exit(1);}
+    if (!fp.is_open()) {cout << "Failed to open database! - Please run 'eupdatedb' first." << endl; exit(1);}
 
     vector<string> backupline;
     bool flag = false;
