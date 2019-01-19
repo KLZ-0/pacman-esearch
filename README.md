@@ -6,7 +6,7 @@ Replacement for both pacman -Ss and pacman -Si
 
 # Features
 
-- Output similar to esearch
+- Output similar to gentoo esearch
 - Combination of pacman search (lists all packages matching a pattern) and pacman info (prints verbose information about a package)
 - It uses a search index which can be updated with the included eupdatedb script
 - It does not support every feature of gentoo esearch, but:

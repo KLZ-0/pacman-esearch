@@ -5,7 +5,7 @@
 using namespace std;
 
 #ifndef VERSION
-#define VERSION "1.03-r2"
+#define VERSION "1.03-r3"
 #endif
 
 void help() {
