@@ -5,7 +5,7 @@
 using namespace std;
 
 #ifndef VERSION
-#define VERSION "1.3.5"
+#define VERSION "1.3.6"
 #endif
 
 void help() {
@@ -24,15 +24,15 @@ esearch <pkgname> [options]\n\
 int main(int argc, char* argv[]) {
     char* pattern = 0;
     unsigned char srcexp = 0;
-    bool colored = true, searchdesc = false;
+    bool colored = true, searchdesc = false, exactsearch = false;
 
     if (argc < 2) { help(); return 0; }
     for (int i = 1; i < argc ; i++) {
         string option = argv[i];
-        if (option == "-n" || option == "--nocolor") colored = false;
-        else if (option == "-S" || option == "--searchdesc") searchdesc = true;
-        else if (option == "-I" || option == "--instonly") srcexp = 1;
+        if (option == "-I" || option == "--instonly") srcexp = 1;
         else if (option == "-N" || option == "--notinst") srcexp = 2;
+        else if (option == "-n" || option == "--nocolor") colored = false;
+        else if (option == "-S" || option == "--searchdesc") searchdesc = true;
         else if (option == "-v" || option == "--version") { cout << VERSION << endl; return 0; }
         else if (option == "-h" || option == "--help") { help(); return 0; }
         else if (option[0] == '-') { cout << "unknown option! see --help for all options" << endl; return 1; }
