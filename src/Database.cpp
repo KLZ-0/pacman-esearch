@@ -1,5 +1,4 @@
 #include <iostream>
-#include <regex>
 #include <fstream>
 #include "Database.h"
 
@@ -7,9 +6,13 @@ using namespace std;
 
 string home = getenv("HOME");
 
-Database::Database(char pattern[], unsigned char srcexp, bool searchdesc) {
+Database::Database(char pattern[], unsigned char srcexp, bool ds, bool es) {
+    descsearch = ds;
+    exactsearch = es;
+    explicitsearch = srcexp;
+    
     loadInstalled();
-    loadDB(pattern, srcexp, searchdesc);
+    loadDB(pattern);
 }
 
 void Database::loadInstalled() {
@@ -25,50 +28,60 @@ void Database::loadInstalled() {
     fp.close();
 }
 
-void Database::loadDB(char pattern[], unsigned char srcexp, bool searchdesc) {
+void Database::loadDB(char pattern[]) {
     db.clear();
     string line, subline;
 
     ifstream fp(home + "/.cache/esearch-database");
     if (!fp.is_open()) {cout << "Failed to open database! - Please run 'eupdatedb' first." << endl; exit(1);}
 
-    vector<string> backupline;
+    string backupline[2];
     bool flag = false;
-    regex ex(pattern, regex_constants::icase);
+    ex.assign(pattern, regex_constants::icase);
     while (getline(fp, line)) {
         line += "\n";
-        if (flag) {
+        if (flag) { // after the flag is set, append every line until an empty line (sign of the end of a block) is reached, then unset the flag
             if (line[0] != '\n') {db.push_back(line); continue;}
-            flag = false;
             db.push_back(line);
+            flag = false;
             continue;
         }
-        subline = line.substr(line.find(':')+2);
-        if (line[0] == 'N' && regex_search(subline.substr(0, subline.size()-1),ex)) {
-            if (srcexp == 1 && find(installed.begin(), installed.end(), subline) == installed.end()) continue; // if explicitly installed and not find in installed then skip
-            if (srcexp == 2 && find(installed.begin(), installed.end(), subline) != installed.end()) continue; // if explicitly NOTinstalled and find in installed then skip
+        subline = line.substr(line.find(':')+2); // creates a searchable string which is examined in the following blocks
+        if (line[0] == 'N' && searchLine(subline)) { // if the name matches and survives the filters then append it to the db and set the flag to load all the other lines
+            if (explicitsearch == 1 && searchInstalled(subline)) continue; // if explicitly installed and not found in installed then skip
+            if (explicitsearch == 2 && !searchInstalled(subline)) continue; // if explicitly NOTinstalled and found in installed then skip
             db.push_back(line);
             flag = true;
         }
-        else if (searchdesc && ((line[0] == 'D' && line[2] == 's') && regex_search(subline.substr(0, subline.size()-1),ex))) {
-            subline = backupline[0].substr(backupline[0].find(':')+2);
-            if (srcexp == 1 && find(installed.begin(), installed.end(), subline) == installed.end()) continue; // if explicitly installed and not find in installed then skip
-            if (srcexp == 2 && find(installed.begin(), installed.end(), subline) != installed.end()) continue; // if explicitly NOTinstalled and find in installed then skip
+        else if (descsearch && ((line[0] == 'D' && line[2] == 's') && searchLine(subline))) { // 
+            subline = backupline[0].substr(backupline[0].find(':')+2); // get the name line
+            if (explicitsearch == 1 && searchInstalled(subline)) continue; // if explicitly installed and not found in installed then skip
+            if (explicitsearch == 2 && !searchInstalled(subline)) continue; // if explicitly NOTinstalled and found in installed then skip
             db.push_back(backupline[0]);
             db.push_back(backupline[1]);
             db.push_back(line);
             flag = true;
         }
-        else if (searchdesc && (line[0] == 'N' || line[0] == 'V')) {
-            backupline.push_back(line);
+        else if (descsearch && line[0] == 'N') {
+            backupline[0] = line; // store the lines in a temp variable in case Description would match
         }
-        else {
-            if (backupline.size() > 0) {
-                backupline.clear();
-            }
+        else if (descsearch && line[0] == 'V') {
+            backupline[1] = line; // store the lines in a temp variable in case Description would match
         }
     }
     fp.close();
+}
+
+bool Database::searchLine(string search) {
+    if (exactsearch) {
+        return regex_match(search.substr(0, search.size()-1),ex);
+    }
+    
+    return regex_search(search.substr(0, search.size()-1),ex);
+}
+
+bool Database::searchInstalled(string search) {
+    return (find(installed.begin(), installed.end(), search) == installed.end());
 }
 
 void Database::printOut(bool colored) {

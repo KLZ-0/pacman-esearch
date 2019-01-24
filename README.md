@@ -60,6 +60,8 @@ NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eup
 
 `--searchdesc, -S` Search also in package description
 
+`--exact-match, -e` Show only exact match and ignore regex
+
 `--version, -v` Show version
 
 `--help, -h` Show help message

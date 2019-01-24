@@ -1,11 +1,10 @@
 #include <iostream>
-#include <vector>
 #include "Database.h"
 
 using namespace std;
 
 #ifndef VERSION
-#define VERSION "1.3.6"
+#define VERSION "1.4.0"
 #endif
 
 void help() {
@@ -16,6 +15,7 @@ esearch <pkgname> [options]\n\
     --notinst, -N\tFind only packages which are NOT installed\n\
     --nocolor, -n\tDon't use ANSI codes for colored output\n\
     --searchdesc, -S\tSearch also in package description\n\
+    --exact-match, -e\tShow only exact match and ignore regex\n\
     --version, -v\tShow version\n\
     --help, -h\t\tShow this message\n\
 " << endl;
@@ -33,6 +33,7 @@ int main(int argc, char* argv[]) {
         else if (option == "-N" || option == "--notinst") srcexp = 2;
         else if (option == "-n" || option == "--nocolor") colored = false;
         else if (option == "-S" || option == "--searchdesc") searchdesc = true;
+        else if (option == "-e" || option == "--exact-match") exactsearch = true;
         else if (option == "-v" || option == "--version") { cout << VERSION << endl; return 0; }
         else if (option == "-h" || option == "--help") { help(); return 0; }
         else if (option[0] == '-') { cout << "unknown option! see --help for all options" << endl; return 1; }
@@ -40,7 +41,7 @@ int main(int argc, char* argv[]) {
     }
     if (!pattern) {cout << "Pattern not found, check arguments.." << endl; return 1;}
 
-    Database main_db(pattern, srcexp, searchdesc);
+    Database main_db(pattern, srcexp, searchdesc, exactsearch);
     main_db.printOut(colored);
 
     return 0;
