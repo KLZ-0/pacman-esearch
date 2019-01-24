@@ -28,5 +28,9 @@ add_test(notinst esearch -N plasma)
 add_test(nocolor esearch -n plasma-desktop)
 add_test(searchdesc esearch -S plasma-desktop)
 
+# merged option tests
+add_test(mergedsearchonly esearch -enI gcc)
+add_test(mergedsearchmixed esearch -n --notinst plasma)
+
 install(TARGETS esearch RUNTIME DESTINATION bin)
 install(PROGRAMS "eupdatedb.sh" DESTINATION bin RENAME "eupdatedb")
