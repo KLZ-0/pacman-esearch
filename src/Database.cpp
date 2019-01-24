@@ -86,7 +86,8 @@ bool Database::searchInstalled(string search) {
 
 void Database::printOut(bool colored) {
     string important_color = "\033[1;31m";
-    string header_color = "\033[38;5;46m";
+    string header_color = "\033[0;1m";
+    string green_asterix_color = "\033[38;5;46m";
     string normal_color = "\033[0m";
     string slight_color = "\033[38;5;34m";
     if (!colored) important_color = header_color = normal_color = slight_color = "";
@@ -95,7 +96,7 @@ void Database::printOut(bool colored) {
     for (string line : db) {
         if (line[0] == 'N') {
             line = line.substr(line.find(':')+2);
-            cout << header_color << "*  " << line.substr(0, line.size()-1);
+            cout << green_asterix_color << "*  " << header_color << line.substr(0, line.size()-1);
             if (find(installed.begin(), installed.end(), line) != installed.end()) {
                 cout << important_color << " [ installed ] \n" << normal_color;
             } else cout << endl;
