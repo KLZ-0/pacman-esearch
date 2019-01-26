@@ -1,22 +1,31 @@
 #include <regex>
 #include <vector>
 
+struct DatabaseLocation {
+    std::string all;
+    std::string installed;
+};
+
+
 class Database {
     private:
-        bool descsearch;
+        DatabaseLocation dbloc;
         bool exactsearch;
-        unsigned char explicitsearch;
 
         std::vector<std::string> db;
         std::vector<std::string> installed;
-        std::regex ex;
 
         void loadInstalled();
-        void loadDB(char pattern[]);
         bool searchLine(std::string substr);
-        bool searchInstalled(std::string substr);
+
+        std::regex ex;
         
     public:
-        Database(char pattern[], unsigned char srcexp, bool ds, bool es);
-        void printOut(bool colored);
+        Database();
+        void loadDB(char pattern[], unsigned char srcexp, bool ds, bool es);
+
+        bool searchInstalled(std::string substr);
+
+        DatabaseLocation getDBloc();
+        std::vector<std::string> getDB();
 };

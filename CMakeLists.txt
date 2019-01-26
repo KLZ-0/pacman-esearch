@@ -8,6 +8,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O2 -pipe -march=x86-64 -s
 set(
     SOURCES 
         "src/main.cpp"
+        "src/Query.cpp"
+        "src/Query.h"        
         "src/Database.cpp"
         "src/Database.h"
 )
