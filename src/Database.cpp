@@ -1,12 +1,32 @@
 #include <iostream>
 #include <fstream>
+#include <sys/stat.h>
+#include <ctime>
 #include "Database.h"
 
 using namespace std;
 
 Database::Database() {
     dbloc.all = string(getenv("HOME")) + "/.cache/esearch-database";
-    dbloc.installed = string(getenv("HOME")) + "/.cache/esearch-database-installed";
+    dbloc.installed = dbloc.all + "-installed";
+}
+
+Database::~Database() {
+    checkTime();
+}
+
+void Database::checkTime() {
+    struct stat buf;
+    stat(dbloc.all.c_str(), &buf);
+    time_t dbcreation = buf.st_ctime;
+    time_t now;
+    time(&now);
+
+    time_t dbage = now-dbcreation;
+
+    if (dbage > 604800) { // 7 days
+        cout << "\033[93;1m *** \033[0mYou should run eupdatedb, the last update was " << dbage/86400 << " days ago - on " << ctime(&dbcreation);
+    }
 }
 
 void Database::loadInstalled() {

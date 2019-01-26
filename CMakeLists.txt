@@ -20,7 +20,7 @@ enable_testing()
 
 # Basic functionality tests
 add_test(noargs esearch)
-add_test(cersion esearch -v)
+add_test(version esearch -v)
 add_test(help esearch -h)
 
 # Option tests

@@ -16,12 +16,14 @@ class Database {
         std::vector<std::string> installed;
 
         void loadInstalled();
+        void checkTime();
         bool searchLine(std::string substr);
 
         std::regex ex;
         
     public:
         Database();
+        ~Database();
         void loadDB(char pattern[], unsigned char srcexp, bool ds, bool es);
 
         bool searchInstalled(std::string substr);
