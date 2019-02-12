@@ -36,8 +36,11 @@ void Database::loadInstalled() {
     ifstream fp(dbloc.installed);
     if (!fp.is_open()) {cout << "Failed to open database! - Please run 'eupdatedb' first." << endl; exit(1);}
 
+    struct InstalledPKG pkg;
     while (getline(fp, line)) {
-        installed.push_back(line + '\n');
+        pkg.name = line.substr(0, line.find(" ")) + '\n';
+        pkg.version = line.substr(line.find(" ") + 1);
+        installed.push_back(pkg);
     }
     fp.close();
 }
@@ -65,15 +68,15 @@ void Database::loadDB(char pattern[], unsigned char srcexp, bool ds, bool es) {
         }
         subline = line.substr(line.find(':')+2); // creates a searchable string which is examined in the following blocks
         if (line[0] == 'N' && searchLine(subline)) { // if the name matches and survives the filters then append it to the db and set the flag to load all the other lines
-            if (srcexp == 1 && searchInstalled(subline)) continue; // if explicitly installed and not found in installed then skip
-            if (srcexp == 2 && !searchInstalled(subline)) continue; // if explicitly NOTinstalled and found in installed then skip
+            if (srcexp == 1 && !isInstalled(subline)) continue; // if explicitly installed and not found in installed then skip
+            if (srcexp == 2 && isInstalled(subline)) continue; // if explicitly NOTinstalled and found in installed then skip
             db.push_back(line);
             flag = true;
         }
         else if (ds && ((line[0] == 'D' && line[2] == 's') && searchLine(subline))) { // 
             subline = backupline[0].substr(backupline[0].find(':')+2); // get the name line
-            if (srcexp == 1 && searchInstalled(subline)) continue; // if explicitly installed and not found in installed then skip
-            if (srcexp == 2 && !searchInstalled(subline)) continue; // if explicitly NOTinstalled and found in installed then skip
+            if (srcexp == 1 && !isInstalled(subline)) continue; // if explicitly installed and not found in installed then skip
+            if (srcexp == 2 && isInstalled(subline)) continue; // if explicitly NOTinstalled and found in installed then skip
             db.push_back(backupline[0]);
             db.push_back(backupline[1]);
             db.push_back(line);
@@ -97,8 +100,17 @@ bool Database::searchLine(string search) {
     return regex_search(search.substr(0, search.size()-1),ex);
 }
 
-bool Database::searchInstalled(string search) {
-    return (find(installed.begin(), installed.end(), search) == installed.end());
+bool Database::isInstalled(string search) {
+    return nameToVersion(search) != "";
+}
+
+string Database::nameToVersion(string name) {
+    for(InstalledPKG pkg : installed) {
+        if (pkg.name == name) {
+            return pkg.version;
+        }
+    }
+    return "";
 }
 
 DatabaseLocation Database::getDBloc() {

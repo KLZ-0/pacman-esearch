@@ -6,6 +6,10 @@ struct DatabaseLocation {
     std::string installed;
 };
 
+struct InstalledPKG {
+    std::string name;
+    std::string version;
+};
 
 class Database {
     private:
@@ -13,7 +17,7 @@ class Database {
         bool exactsearch;
 
         std::vector<std::string> db;
-        std::vector<std::string> installed;
+        std::vector<InstalledPKG> installed;
 
         void loadInstalled();
         void checkTime();
@@ -26,7 +30,8 @@ class Database {
         ~Database();
         void loadDB(char pattern[], unsigned char srcexp, bool ds, bool es);
 
-        bool searchInstalled(std::string substr);
+        bool isInstalled(std::string search);
+        std::string nameToVersion(std::string name);
 
         DatabaseLocation getDBloc();
         std::vector<std::string> getDB();

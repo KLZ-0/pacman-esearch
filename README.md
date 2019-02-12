@@ -79,5 +79,5 @@ A: I am a fan of Gentoo and when I started to use Arch on my laptop, I missed [e
 **Why C++ ?** -- Combining the two command in a shell script would be significantly slower (I tried it..)
 
 # Requirements
-- **Arch linux and pacman** (obviously) - It uses pacman -Si and pacman -Qqe to fill up its database
+- **Arch linux and pacman** (obviously) - It uses pacman -Si and pacman -Qe to fill up its database
 - **GCC g++ with -std=c++11** - already present in most cases

@@ -4,7 +4,7 @@
 using namespace std;
 
 #ifndef VERSION
-#define VERSION "1.5.1"
+#define VERSION "1.5.2"
 #endif
 
 string option;

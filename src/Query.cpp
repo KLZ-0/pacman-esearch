@@ -24,8 +24,9 @@ void Query::print() {
         if (line[0] == 'N') {
             line = line.substr(line.find(':')+2);
             cout << green_asterix_color << "*  " << header_color << line.substr(0, line.size()-1);
-            if (!main_db.searchInstalled(line)) {
-                cout << important_color << " [ installed ] \n" << normal_color;
+            string version = main_db.nameToVersion(line);
+            if (version != "") {
+                cout << important_color << " [ installed ]\n" << slight_color << "      Current Version : " << header_color << version << " \n" << normal_color;
             } else cout << endl;
         }
         else if (line[0] == ' ') cout << "      " << header_color << line << normal_color;
