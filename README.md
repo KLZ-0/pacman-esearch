@@ -1,7 +1,7 @@
 # pacman-esearch
 
 [![Build Status](https://travis-ci.org/KLZ-0/pacman-esearch.svg?branch=master)](https://travis-ci.org/KLZ-0/pacman-esearch)
-[![AUR Status](https://img.shields.io/badge/AUR-v1.5.1-blue.svg)](https://aur.archlinux.org/packages/esearch/)
+[![AUR Status](https://img.shields.io/badge/AUR-v1.5.2-blue.svg)](https://aur.archlinux.org/packages/esearch/)
 
 Replacement for both pacman -Ss and pacman -Si
 
