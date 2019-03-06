@@ -7,12 +7,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O2 -pipe -march=x86-64 -s
 
 set(
     SOURCES 
-        "src/main.cpp"
-        "src/Query.cpp"
-        "src/Query.h"        
-        "src/Database.cpp"
-        "src/Database.h"
+        "src/main.c"
+        "libs/misc.c"
+        "libs/misc.h"   
+        "libs/formatter.c"
+        "libs/formatter.h"      
 )
+
+# add_subdirectory (libs)
+include_directories(libs)
 
 add_executable(esearch ${SOURCES})
 

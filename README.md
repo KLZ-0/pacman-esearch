@@ -1,3 +1,7 @@
+# In Development
+
+This is the rewritten version of pacman-esearch in plain C
+
 # pacman-esearch
 
 [![Build Status](https://travis-ci.org/KLZ-0/pacman-esearch.svg?branch=master)](https://travis-ci.org/KLZ-0/pacman-esearch)
