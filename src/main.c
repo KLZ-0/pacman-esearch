@@ -1,6 +1,6 @@
 #include <string.h>
+#include <stdio.h>
 
-#include "stdio.h"
 #include "misc.h"
 #include "formatter.h"
 
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
             else { printf("unknown option! see --help for all options\n"); return 1; }
         }
         else if (option[0] == '-') {
-            for(int i = 1; i < strlen(option); i++) {
+            for(size_t i = 1; i < strlen(option); i++) {
                 switch (option[i])
                 {
                     // case 'I': query.setSearchExplicitly(1); break;
