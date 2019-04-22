@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
             else if (strcmp(option, "--nocolor")) setSearchFlag(FLAG_COLOR);
             else if (strcmp(option, "--searchdesc")) setSearchFlag(FLAG_DESC);
             else if (strcmp(option, "--exact-match")) setSearchFlag(FLAG_EXACT);
-            if (strcmp(option, "--version") == 0) { printf("%s\n", VERSION); return 0; }
+            else if (strcmp(option, "--version") == 0) { printf("%s\n", VERSION); return 0; }
             else if (strcmp(option, "--help") == 0) { help(); return 0; }
             else { printf("unknown option! see --help for all options\n"); return 1; }
         }
