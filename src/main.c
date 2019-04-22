@@ -4,7 +4,7 @@
 #include <regex.h>
 
 #ifndef VERSION
-#define VERSION "2.1.4"
+#define VERSION "2.1.5"
 #endif
 
 char *COLOR_IMPORTANT = "\033[1;31m";
@@ -134,6 +134,7 @@ int searchFile(const regex_t *ex, char* installed) {
     while (fgets(line, 4096, fstream)) {
         if (flag) {
             if (strlen(line) == 1) {
+                formatLine(repoline, LINE_NORMAL);
                 formatLine(line, LINE_BLOCKTERM);
                 flag = 0;
                 continue;
@@ -149,29 +150,31 @@ int searchFile(const regex_t *ex, char* installed) {
             continue;
         }
                 
-        if (line[0] == 'N' && !regexec(ex, line, 0, NULL, 0)) {
+        if (line[0] == 'N') {
             strcpy(header, &line[lastIndexOf(line, ' ')+1]);
             strtok(header, "\n");
-            installedIndex = strstr(installed, header);
-            if (installedIndex) {
-                if (isSearchFlag(FLAG_NOINST)) {
-                    continue;
+
+            if (!regexec(ex, header, 0, NULL, 0)) {
+                installedIndex = strstr(installed, header);
+                if (installedIndex) {
+                    if (isSearchFlag(FLAG_NOINST)) {
+                        continue;
+                    }
+                    getWordUntilDelimiter(pkgVer, installedIndex, '\n');
+                    sprintf(line, "%s %s[ installed ]\n      %sCurrent Version : %s%s", header, COLOR_IMPORTANT, COLOR_LIGHT, COLOR_HEADER, pkgVer);
                 }
-                getWordUntilDelimiter(pkgVer, installedIndex, '\n');
-                sprintf(line, "%s %s[ installed ]\n      %sCurrent Version : %s%s", header, COLOR_IMPORTANT, COLOR_LIGHT, COLOR_HEADER, pkgVer);
-            }
-            else {
-                if (isSearchFlag(FLAG_INST)) {
-                    continue;
+                else {
+                    if (isSearchFlag(FLAG_INST)) {
+                        continue;
+                    }
+                    sprintf(line, "%s", header);
                 }
-                sprintf(line, "%s", header);
+                
+                
+                flag = 1;
+                formatLine(line, LINE_HEADER);
+                continue;
             }
-            
-            
-            flag = 1;
-            formatLine(line, LINE_HEADER);
-            formatLine(repoline, LINE_NORMAL);
-            continue;
         }
 
         if (startsWith(line, "Repo")) {
@@ -188,7 +191,7 @@ int searchFile(const regex_t *ex, char* installed) {
 int main(int argc, char *argv[]) {
 
     char *option;
-    char *pattern = NULL;
+    char pattern[256];
     regex_t ex;
 
     if (argc < 2) { help(); return 0; }
@@ -224,10 +227,23 @@ int main(int argc, char *argv[]) {
             }
         }
         else {
-            pattern = argv[i];
+            strcpy(pattern, argv[i]);
         }
     }
     
+    ////// Instantly applyable search flags
+
+    if (isSearchFlag(FLAG_NOCOLOR)) {
+        COLOR_GREEN_ASTERIX = COLOR_HEADER = COLOR_IMPORTANT = COLOR_LIGHT = COLOR_NORMAL = "";
+    }
+
+    if (isSearchFlag(FLAG_EXACT)) {
+        char tmp[250];
+        strcpy(tmp, pattern);
+        sprintf(pattern, "^%s$", tmp);
+    }
+    
+
     ////// Additional checks
 
     if (pattern == NULL) {
@@ -235,15 +251,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
-    if (regcomp(&ex, pattern, 0)) {
+    if (regcomp(&ex, pattern, REG_ICASE)) {
         fprintf(stderr, "Could not compile regex\n");
         return 1;
-    }
-
-    ////// Instantly applyable search flags
-
-    if (isSearchFlag(FLAG_NOCOLOR)) {
-        COLOR_GREEN_ASTERIX = COLOR_HEADER = COLOR_IMPORTANT = COLOR_LIGHT = COLOR_NORMAL = "";
     }
 
     ////// Load installed
@@ -271,6 +281,7 @@ int main(int argc, char *argv[]) {
     if (searchFile(&ex, installedBuffer)) {
         return -127;
     }
+    regfree(&ex);
 
     return 0;
 
