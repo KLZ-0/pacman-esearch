@@ -4,7 +4,7 @@
 #include <regex.h>
 
 #ifndef VERSION
-#define VERSION "2.1.1"
+#define VERSION "2.1.2"
 #endif
 
 #define COLOR_IMPORTANT "\033[1;31m"
@@ -137,8 +137,11 @@ int searchFile(const regex_t *ex, char* installed) {
                 }
                 sprintf(line, "%s %s[ installed ]%s", header, COLOR_IMPORTANT, COLOR_NORMAL);
             }
+            else {
+                sprintf(line, "%s", header);
+            }
             
-
+            
             flag = 1;
             formatLine(line, LINE_HEADER);
             formatLine(repoline, LINE_NORMAL);
@@ -202,7 +205,7 @@ int main(int argc, char *argv[]) {
     ////// Additional checks
 
     if (pattern == NULL) {
-        fprintf(stderr, "Pattern not found\n");
+        fprintf(stderr, "Pattern not found, check arguments..\n");
         return 1;
     }
     
@@ -230,18 +233,12 @@ int main(int argc, char *argv[]) {
         fclose (installedFile);
     }
 
-    printf(installedBuffer);
-
     ////// Actual search
 
+    printf("\n");
     if (searchFile(&ex, installedBuffer)) {
         return -127;
     }
-
-    // if (!query.isPatternValid()) {cout << "Pattern not found, check arguments.." << endl; return 1;}
-
-    // query.execute();
-    // query.print();
 
     return 0;
 
