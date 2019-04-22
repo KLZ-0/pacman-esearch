@@ -4,7 +4,7 @@
 #include <regex.h>
 
 #ifndef VERSION
-#define VERSION "2.1.3"
+#define VERSION "2.1.4"
 #endif
 
 char *COLOR_IMPORTANT = "\033[1;31m";
@@ -96,6 +96,26 @@ void formatLine(char* line, LineType type) {
 
 }
 
+void getWordUntilDelimiter(char *newchar, char *point, char delimiter) {
+
+    // detection of the first space to get a whole word
+    char *nextWordPos = 0;
+    for(size_t i = 1; i < 30; i++) {
+        if (point[i] == ' ') {            
+            nextWordPos = &point[i]+1;
+            break;
+        }
+    }  
+
+    for(size_t i = 0; i < 30; i++) {
+        newchar[i] = *(nextWordPos+i);
+        if (*(nextWordPos+i+1) == delimiter) {
+            break;
+        }
+    }
+
+}
+
 int searchFile(const regex_t *ex, char* installed) {
 
     FILE *fstream = fopen(db_main, "r");
@@ -108,6 +128,9 @@ int searchFile(const regex_t *ex, char* installed) {
 
     char repoline[4096];
     int flag = 0;
+    char header[4000];
+    char *installedIndex;
+    char pkgVer[30];
     while (fgets(line, 4096, fstream)) {
         if (flag) {
             if (strlen(line) == 1) {
@@ -127,17 +150,20 @@ int searchFile(const regex_t *ex, char* installed) {
         }
                 
         if (line[0] == 'N' && !regexec(ex, line, 0, NULL, 0)) {
-            char header[4000];
             strcpy(header, &line[lastIndexOf(line, ' ')+1]);
             strtok(header, "\n");
-            if (isSearchFlag(FLAG_INST) && !strstr(installed, header)) continue;
-            else if (strstr(installed, header)) {
+            installedIndex = strstr(installed, header);
+            if (installedIndex) {
                 if (isSearchFlag(FLAG_NOINST)) {
                     continue;
                 }
-                sprintf(line, "%s %s[ installed ]%s", header, COLOR_IMPORTANT, COLOR_NORMAL);
+                getWordUntilDelimiter(pkgVer, installedIndex, '\n');
+                sprintf(line, "%s %s[ installed ]\n      %sCurrent Version : %s%s", header, COLOR_IMPORTANT, COLOR_LIGHT, COLOR_HEADER, pkgVer);
             }
             else {
+                if (isSearchFlag(FLAG_INST)) {
+                    continue;
+                }
                 sprintf(line, "%s", header);
             }
             
