@@ -4,14 +4,14 @@
 #include <regex.h>
 
 #ifndef VERSION
-#define VERSION "2.1.2"
+#define VERSION "2.1.3"
 #endif
 
-#define COLOR_IMPORTANT "\033[1;31m"
-#define COLOR_HEADER "\033[0;1m"
-#define COLOR_GREEN_ASTERIX "\033[38;5;46m"
-#define COLOR_NORMAL "\033[0m"
-#define COLOR_LIGHT "\033[38;5;34m"
+char *COLOR_IMPORTANT = "\033[1;31m";
+char *COLOR_HEADER = "\033[0;1m";
+char *COLOR_GREEN_ASTERIX = "\033[38;5;46m";
+char *COLOR_NORMAL = "\033[0m";
+char *COLOR_LIGHT = "\033[38;5;34m";
 
 char db_main[256];
 char db_installed[256];
@@ -29,7 +29,7 @@ typedef enum {
 typedef enum {
     FLAG_INST,
     FLAG_NOINST,
-    FLAG_COLOR,
+    FLAG_NOCOLOR,
     FLAG_DESC,
     FLAG_EXACT
 } SearchFlag;
@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
         if (option[0] == '-' && option[1] == '-') {
             if (strcmp(option, "--instonly")) setSearchFlag(FLAG_INST);
             else if (strcmp(option, "--notinst")) setSearchFlag(FLAG_NOINST);
-            else if (strcmp(option, "--nocolor")) setSearchFlag(FLAG_COLOR);
+            else if (strcmp(option, "--nocolor")) setSearchFlag(FLAG_NOCOLOR);
             else if (strcmp(option, "--searchdesc")) setSearchFlag(FLAG_DESC);
             else if (strcmp(option, "--exact-match")) setSearchFlag(FLAG_EXACT);
             else if (strcmp(option, "--version") == 0) { printf("%s\n", VERSION); return 0; }
@@ -184,7 +184,7 @@ int main(int argc, char *argv[]) {
                 {
                     case 'I': setSearchFlag(FLAG_INST); break;
                     case 'N': setSearchFlag(FLAG_NOINST); break;
-                    case 'n': setSearchFlag(FLAG_COLOR); break;
+                    case 'n': setSearchFlag(FLAG_NOCOLOR); break;
                     case 'S': setSearchFlag(FLAG_DESC); break;
                     case 'e': setSearchFlag(FLAG_EXACT); break;
                     case 'v': printf("%s\n", VERSION); return 0;
@@ -212,6 +212,12 @@ int main(int argc, char *argv[]) {
     if (regcomp(&ex, pattern, 0)) {
         fprintf(stderr, "Could not compile regex\n");
         return 1;
+    }
+
+    ////// Instantly applyable search flags
+
+    if (isSearchFlag(FLAG_NOCOLOR)) {
+        COLOR_GREEN_ASTERIX = COLOR_HEADER = COLOR_IMPORTANT = COLOR_LIGHT = COLOR_NORMAL = "";
     }
 
     ////// Load installed
