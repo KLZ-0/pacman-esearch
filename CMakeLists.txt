@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 project(esearch)
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O2 -pipe -march=x86-64 -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O2 -pipe -march=x86-64 -std=c++11")
 # set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
 set(
@@ -15,14 +15,6 @@ set(
 )
 
 add_executable(esearch ${SOURCES})
-
-if (UNIX)
-    target_compile_options(esearch PUBLIC "-Wall -Wextra -O2 -pipe -std=c++11")
-endif (UNIX)
-
-if (MSVC)
-    target_compile_options(esearch PUBLIC "/MD /O2 /Ob2 /std:c++11")
-endif (MSVC)
 
 enable_testing()
 
