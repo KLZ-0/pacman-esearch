@@ -221,11 +221,11 @@ int main(int argc, char *argv[]) {
     for (int i = 1; i < argc ; i++) {
         option = argv[i];
         if (option[0] == '-' && option[1] == '-') {
-            if (strcmp(option, "--instonly")) setSearchFlag(FLAG_INST);
-            else if (strcmp(option, "--notinst")) setSearchFlag(FLAG_NOINST);
-            else if (strcmp(option, "--nocolor")) setSearchFlag(FLAG_NOCOLOR);
-            else if (strcmp(option, "--nowarndb")) setSearchFlag(FLAG_NOWARNDB);
-            else if (strcmp(option, "--exact-match")) setSearchFlag(FLAG_EXACT);
+            if (strcmp(option, "--instonly") == 0) setSearchFlag(FLAG_INST);
+            else if (strcmp(option, "--notinst") == 0) setSearchFlag(FLAG_NOINST);
+            else if (strcmp(option, "--nocolor") == 0) setSearchFlag(FLAG_NOCOLOR);
+            else if (strcmp(option, "--nowarndb") == 0) setSearchFlag(FLAG_NOWARNDB);
+            else if (strcmp(option, "--exact-match") == 0) setSearchFlag(FLAG_EXACT);
             else if (strcmp(option, "--version") == 0) { printf("%s\n", VERSION); return 0; }
             else if (strcmp(option, "--help") == 0) { help(); return 0; }
             else { printf("unknown option! see --help for all options\n"); return 1; }

@@ -32,7 +32,7 @@ add_test(search esearch plasma-desktop)
 add_test(instonly esearch -I plasma)
 add_test(notinst esearch -N plasma)
 add_test(nocolor esearch -n plasma-desktop)
-add_test(searchdesc esearch -S plasma-desktop)
+add_test(nowarndb esearch -w plasma-desktop)
 
 # merged option tests
 add_test(mergedsearchonly esearch -enI gcc)
