@@ -1,21 +1,21 @@
-# In Development
-
-This is the rewritten version of pacman-esearch in plain C
-
 # pacman-esearch
 
 [![Build Status](https://travis-ci.org/KLZ-0/pacman-esearch.svg?branch=master)](https://travis-ci.org/KLZ-0/pacman-esearch)
 [![AUR Status](https://img.shields.io/badge/AUR-v1.5.2-blue.svg)](https://aur.archlinux.org/packages/esearch/)
 
+This is the rewritten version of pacman-esearch in plain C
+
+The original C++ version can be found in the `v1` branch of this repository
+
 # Features
 
 - Output similar to gentoo esearch
 - Combination of pacman search (lists all packages matching a pattern) and pacman info (prints verbose information about a package)
-- It uses a search index which must be initialized and updated with `eupdatedb`
-- It does support some features of gentoo esearch, including:
+- Offline search
+- Options and features similar to those of gentoo esearch, including:
   - **regex support**
   - filter **Installed or NOT installed** packages
-  - show detailed information about **multiple** packages at the same time unlike pacman -Si
+  - show detailed information about **multiple** packages at the same time (unlike pacman -Si)
   - support for **colored output using ANSI codes** by default (can be disabled with `-n`)
 
 # Installation
@@ -43,13 +43,13 @@ Create the search index:
 
 `eupdatedb`
 
-NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eupdatedb as regular user (the one who will be using esearch) -- For example the search index for user `john` will be stored in `/home/john/.cache/` or whatever the `$HOME` variable points at
+NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eupdatedb as regular user (the one who will be using esearch) -- For example the search index for user `john` will be stored in `/home/john/.cache/`
 
 # Usage
 
 **`eupdatedb [-q|--quiet]`**
 
-`-q, --quiet`     displays nothing, just updates the search index - can be used in cron jobs or other scripts (Don't forget to set the HOME variable explicitly when the system crontab is used).
+`-q, --quiet`     displays nothing, just update the search index - can be used in cron jobs or other scripts (Don't forget to set the HOME variable explicitly when the system crontab is used).
 
 
 **`esearch [options] <pattern>`**
