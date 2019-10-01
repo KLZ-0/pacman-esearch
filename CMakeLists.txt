@@ -8,11 +8,7 @@ add_compile_options(-Wall -Wextra -O2 -pipe -march=x86-64 -std=c99)
 
 set(
     SOURCES 
-        "src/main.c"
-        "libs/misc.c"
-        "libs/misc.h"   
-        "libs/formatter.c"
-        "libs/formatter.h"      
+        "src/main.c"      
 )
 
 # add_subdirectory (libs)
