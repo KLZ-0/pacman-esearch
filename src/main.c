@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 
 #ifndef VERSION
-#define VERSION "2.1.5"
+#define VERSION "2.1.6"
 #endif
 
 #define DB ".cache/esearch-database"
