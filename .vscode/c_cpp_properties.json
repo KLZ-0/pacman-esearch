@@ -7,7 +7,7 @@
             ],
             "defines": [],
             "compilerPath": "${default}",
-            "cStandard": "c11",
+            "cStandard": "c99",
             "cppStandard": "c++11",
             "intelliSenseMode": "gcc-x64",
             "configurationProvider": "vector-of-bool.cmake-tools",
