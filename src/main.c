@@ -277,11 +277,14 @@ int main(int argc, char *argv[]) {
 
     sprintf(db_main, "%s/%s", getenv("HOME"), DB);
     sprintf(db_installed, "%s/%s-installed", getenv("HOME"), DB);
-    // TODO: Add file exist check
     // TODO: Add option to disable database time check
 
     long length;
     FILE *installedFile = fopen (db_installed, "r");
+    if(installedFile == NULL) {
+        fprintf(stderr, "Error opening file");
+        return 1;
+    }
 
     if (installedFile) {
         fseek (installedFile, 0, SEEK_END);
