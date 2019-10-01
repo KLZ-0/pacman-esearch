@@ -2,10 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <regex.h>
+#include <time.h>
+#include <sys/stat.h>
 
 #ifndef VERSION
 #define VERSION "2.1.5"
 #endif
+
+#define DB ".cache/esearch-database"
 
 char *COLOR_IMPORTANT = "\033[1;31m";
 char *COLOR_HEADER = "\033[0;1m";
@@ -188,6 +192,19 @@ int searchFile(const regex_t *ex, char* installed) {
 
 }
 
+void dbAgeCheck(char* db) {
+    struct stat buf;
+    stat(db, &buf);
+    time_t dbcreation = buf.st_ctime;
+    time_t now;
+    time(&now);
+
+    time_t dbage = now-dbcreation;
+    if (dbage > 604800) { // 7 days
+        printf("\033[93;1m *** \033[0mYou should run eupdatedb, the last update was %lu days ago - on %s", dbage/86400, ctime(&dbcreation));
+    }
+}
+
 int main(int argc, char *argv[]) {
 
     char *option;
@@ -258,8 +275,10 @@ int main(int argc, char *argv[]) {
 
     ////// Load installed
 
-    sprintf(db_main, "%s/.cache/esearch-database", getenv("HOME"));
-    sprintf(db_installed, "%s/.cache/esearch-database-installed", getenv("HOME"));
+    sprintf(db_main, "%s/%s", getenv("HOME"), DB);
+    sprintf(db_installed, "%s/%s-installed", getenv("HOME"), DB);
+    // TODO: Add file exist check
+    // TODO: Add option to disable database time check
 
     long length;
     FILE *installedFile = fopen (db_installed, "r");
@@ -282,6 +301,9 @@ int main(int argc, char *argv[]) {
         return -127;
     }
     regfree(&ex);
+
+    ////// Check database age
+    dbAgeCheck(db_main);
 
     return 0;
 
