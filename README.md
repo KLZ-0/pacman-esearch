@@ -7,19 +7,17 @@ This is the rewritten version of pacman-esearch in plain C
 [![Build Status](https://travis-ci.org/KLZ-0/pacman-esearch.svg?branch=master)](https://travis-ci.org/KLZ-0/pacman-esearch)
 [![AUR Status](https://img.shields.io/badge/AUR-v1.5.2-blue.svg)](https://aur.archlinux.org/packages/esearch/)
 
-Replacement for both pacman -Ss and pacman -Si
-
 # Features
 
 - Output similar to gentoo esearch
 - Combination of pacman search (lists all packages matching a pattern) and pacman info (prints verbose information about a package)
-- It uses a search index which can be updated with the included eupdatedb script
-- It does not support every feature of gentoo esearch, but:
-  - It can search **explicitly Installed or NOT installed**
-  - It **supports regex**
-  - It can show detailed information about **multiple** packages at the same time unlike pacman -Si
-  - It supports **colored output using ANSI codes** by default - there is also an option to disable it
-  - it can search optionally also in **descriptions**
+- It uses a search index which must be initialized and updated with `eupdatedb`
+- It does support some features of gentoo esearch, including:
+  - **regex support**
+  - filter **Installed or NOT installed** packages
+  - show detailed information about **multiple** packages at the same time unlike pacman -Si
+  - support for **colored output using ANSI codes** by default (can be disabled with `-n`)
+  - search in **descriptions**
 
 # Installation
 
@@ -71,18 +69,9 @@ NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eup
 
 `--help, -h` Show help message
 
-# FAQ
+# Troubleshooting
 
-Q: I am getting `Failed to open database!` whenever I run esearch.
-
-A: This error means esearch can't find the search index, check if it exists in the desired location or run `eupdatedb`. Optionally check if you have write permissions in `~/.cache/`.
-
-Q: Why was it created?
-
-A: I am a fan of Gentoo and when I started to use Arch on my laptop, I missed [esearch](https://github.com/fuzzyray/esearch) and I wasn't happy with the search capabilities of pacman
-
-**Why C++ ?** -- Combining the two command in a shell script would be significantly slower (I tried it..)
+`Error: Failed to open database!` - run `eupdatedb`.
 
 # Requirements
-- **Arch linux and pacman** (obviously) - It uses pacman -Si and pacman -Qe to fill up its database
-- **GCC g++ with -std=c++11** - already present in most cases
+- **GCC with -std=c++11**
