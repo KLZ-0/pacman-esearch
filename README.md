@@ -17,7 +17,6 @@ This is the rewritten version of pacman-esearch in plain C
   - filter **Installed or NOT installed** packages
   - show detailed information about **multiple** packages at the same time unlike pacman -Si
   - support for **colored output using ANSI codes** by default (can be disabled with `-n`)
-  - search in **descriptions**
 
 # Installation
 
@@ -61,7 +60,7 @@ NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eup
 
 `--nocolor, -n` Don't use ANSI codes for colored output
 
-`--searchdesc, -S` Search also in package description
+`--nowarndb, -w` Do not complain about database age
 
 `--exact-match, -e` Show only exact match
 
@@ -74,4 +73,4 @@ NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eup
 `Error: Failed to open database!` - run `eupdatedb`.
 
 # Requirements
-- **GCC with -std=c++11**
+- **GCC**

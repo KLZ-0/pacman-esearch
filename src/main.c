@@ -34,7 +34,7 @@ typedef enum {
     FLAG_INST,
     FLAG_NOINST,
     FLAG_NOCOLOR,
-    FLAG_DESC,
+    FLAG_NOWARNDB,
     FLAG_EXACT
 } SearchFlag;
 
@@ -48,8 +48,8 @@ esearch <pkgname> [options]\n\
     --instonly, -I\tFind only packages which are installed\n\
     --notinst, -N\tFind only packages which are NOT installed\n\
     --nocolor, -n\tDon't use ANSI codes for colored output\n\
-    --searchdesc, -S\tSearch also in package description\n\
     --exact-match, -e\tShow only exact match\n\
+    --nowarndb, -w\tDo not complain about database age\n\
     --version, -v\tShow version\n\
     --help, -h\t\tShow this message\n\n\
 ", VERSION);
@@ -224,7 +224,7 @@ int main(int argc, char *argv[]) {
             if (strcmp(option, "--instonly")) setSearchFlag(FLAG_INST);
             else if (strcmp(option, "--notinst")) setSearchFlag(FLAG_NOINST);
             else if (strcmp(option, "--nocolor")) setSearchFlag(FLAG_NOCOLOR);
-            else if (strcmp(option, "--searchdesc")) setSearchFlag(FLAG_DESC);
+            else if (strcmp(option, "--nowarndb")) setSearchFlag(FLAG_NOWARNDB);
             else if (strcmp(option, "--exact-match")) setSearchFlag(FLAG_EXACT);
             else if (strcmp(option, "--version") == 0) { printf("%s\n", VERSION); return 0; }
             else if (strcmp(option, "--help") == 0) { help(); return 0; }
@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
                     case 'I': setSearchFlag(FLAG_INST); break;
                     case 'N': setSearchFlag(FLAG_NOINST); break;
                     case 'n': setSearchFlag(FLAG_NOCOLOR); break;
-                    case 'S': setSearchFlag(FLAG_DESC); break;
+                    case 'w': setSearchFlag(FLAG_NOWARNDB); break;
                     case 'e': setSearchFlag(FLAG_EXACT); break;
                     case 'v': printf("%s\n", VERSION); return 0;
                     case 'h': help(); return 0;
@@ -312,7 +312,9 @@ int main(int argc, char *argv[]) {
     regfree(&ex);
 
     ////// Check database age
-    dbAgeCheck(db_main);
+    if (!isSearchFlag(FLAG_NOWARNDB)) {
+        dbAgeCheck(db_main);
+    }
 
     return 0;
 
