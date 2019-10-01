@@ -137,7 +137,9 @@ int searchFile(const regex_t *ex, char* installed) {
     char pkgVer[30];
     while (fgets(line, 4096, fstream)) {
         if (flag) {
+            // Flag set -> just print the line as is
             if (strlen(line) == 1) {
+                // Final line -> print "Repository" line and end block
                 formatLine(repoline, LINE_NORMAL);
                 formatLine(line, LINE_BLOCKTERM);
                 flag = 0;
@@ -145,9 +147,11 @@ int searchFile(const regex_t *ex, char* installed) {
             }
 
             if (line[0] != ' ') {
+                // Normal line
                 formatLine(line, LINE_NORMAL);
             }
             else {
+                // Partly broken line (e.g. "Depends On" or "Optional Deps")
                 formatLine(line, LINE_SOFTBROKEN);
             }
             
@@ -155,6 +159,7 @@ int searchFile(const regex_t *ex, char* installed) {
         }
                 
         if (line[0] == 'N') {
+            // Search "Name" line for matches and set flag for block start
             strcpy(header, &line[lastIndexOf(line, ' ')+1]);
             strtok(header, "\n");
 
@@ -182,6 +187,7 @@ int searchFile(const regex_t *ex, char* installed) {
         }
 
         if (startsWith(line, "Repo")) {
+            // Store "Repository" line in a buffer to be printed at the end of a block
             strncpy(repoline, line, 4096);
         }
         
