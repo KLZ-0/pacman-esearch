@@ -131,18 +131,18 @@ int searchFile(const regex_t *ex, char* installed) {
     }
 
     char repoline[4096];
-    int flag = 0;
+    int inblock = 0;
     char header[4000];
     char *installedIndex;
     char pkgVer[30];
     while (fgets(line, 4096, fstream)) {
-        if (flag) {
-            // Flag set -> just print the line as is
+        if (inblock) {
+            // Flag "inblock" set -> just print the line as is
             if (strlen(line) == 1) {
                 // Final line -> print "Repository" line and end block
                 formatLine(repoline, LINE_NORMAL);
                 formatLine(line, LINE_BLOCKTERM);
-                flag = 0;
+                inblock = 0;
                 continue;
             }
 
@@ -159,7 +159,7 @@ int searchFile(const regex_t *ex, char* installed) {
         }
                 
         if (line[0] == 'N') {
-            // Search "Name" line for matches and set flag for block start
+            // Search "Name" line for matches and set inblock for block start
             strcpy(header, &line[lastIndexOf(line, ' ')+1]);
             strtok(header, "\n");
 
@@ -180,7 +180,7 @@ int searchFile(const regex_t *ex, char* installed) {
                 }
                 
                 
-                flag = 1;
+                inblock = 1;
                 formatLine(line, LINE_HEADER);
                 continue;
             }
