@@ -85,7 +85,7 @@ void formatLine(char* line, LineType type) {
         tempToken = strtok(line, ":");
             printf("%s      %s%s:%s%s", COLOR_LIGHT, tempToken, COLOR_HEADER, strtok(NULL, ""), COLOR_NORMAL);
             break;
-    
+
         case LINE_SOFTBROKEN:
             printf("      %s%s%s", COLOR_HEADER, line, COLOR_NORMAL);
             break;
@@ -154,10 +154,10 @@ int searchFile(const regex_t *ex, char* installed) {
                 // Partly broken line (e.g. "Depends On" or "Optional Deps")
                 formatLine(line, LINE_SOFTBROKEN);
             }
-            
+
             continue;
         }
-                
+
         if (line[0] == 'N') {
             // Search "Name" line for matches and set inblock for block start
             strcpy(header, &line[lastIndexOf(line, ' ')+1]);
@@ -178,8 +178,7 @@ int searchFile(const regex_t *ex, char* installed) {
                     }
                     sprintf(line, "%s", header);
                 }
-                
-                
+
                 inblock = 1;
                 formatLine(line, LINE_HEADER);
                 continue;
@@ -190,7 +189,7 @@ int searchFile(const regex_t *ex, char* installed) {
             // Store "Repository" line in a buffer to be printed at the end of a block
             strncpy(repoline, line, 4096);
         }
-        
+
     }
 
     fclose(fstream);
@@ -242,7 +241,7 @@ int main(int argc, char *argv[]) {
                     case 'v': printf("%s\n", VERSION); return 0;
                     case 'h': help(); return 0;
                     case '\0': break;
-                
+
                     default:
                         printf("unknown option! see --help for all options\n");
                         return 1;
@@ -253,7 +252,7 @@ int main(int argc, char *argv[]) {
             strcpy(pattern, argv[i]);
         }
     }
-    
+
     ////// Instantly applyable search flags
 
     if (isSearchFlag(FLAG_NOCOLOR)) {
@@ -265,7 +264,7 @@ int main(int argc, char *argv[]) {
         strcpy(tmp, pattern);
         sprintf(pattern, "^%s$", tmp);
     }
-    
+
 
     ////// Additional checks
 
@@ -273,7 +272,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Pattern not found, check arguments..\n");
         return 1;
     }
-    
+
     if (regcomp(&ex, pattern, REG_ICASE)) {
         fprintf(stderr, "Could not compile regex\n");
         return 1;
