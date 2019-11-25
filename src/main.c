@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 
 #ifndef VERSION
-#define VERSION "2.1.6"
+#define VERSION "2.1.7"
 #endif
 
 #define DB ".cache/esearch-database"
@@ -22,6 +22,8 @@ char db_installed[256];
 char *installedBuffer = 0;
 
 int flags = 0;
+
+// TODO: Make option to print only found package names/only first
 
 typedef enum {
     LINE_HEADER,
@@ -306,8 +308,10 @@ int main(int argc, char *argv[]) {
 
     printf("\n");
     if (searchFile(&ex, installedBuffer)) {
+        free(installedBuffer);
         return -127;
     }
+    free(installedBuffer);
     regfree(&ex);
 
     ////// Check database age
