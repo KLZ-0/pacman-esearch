@@ -1,7 +1,7 @@
 # pacman-esearch
 
 [![Build Status](https://travis-ci.org/KLZ-0/pacman-esearch.svg?branch=master)](https://travis-ci.org/KLZ-0/pacman-esearch)
-[![AUR Status](https://img.shields.io/badge/AUR-v2.1.6-blue.svg)](https://aur.archlinux.org/packages/esearch/)
+[![AUR Status](https://img.shields.io/badge/AUR-v2.1.7-blue.svg)](https://aur.archlinux.org/packages/esearch/)
 
 This is the rewritten version of pacman-esearch in plain C
 
