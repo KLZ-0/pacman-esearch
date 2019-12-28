@@ -4,9 +4,11 @@
 #include <regex.h>
 #include <time.h>
 #include <sys/stat.h>
+#include <limits.h>
+#include <stdbool.h>
 
 #ifndef VERSION
-#define VERSION "2.1.7"
+#define VERSION "3.0.0"
 #endif
 
 #define DB ".cache/esearch-database"
@@ -21,27 +23,37 @@ char db_main[256];
 char db_installed[256];
 char *installedBuffer = 0;
 
-int flags = 0;
-
 // TODO: Make option to print only found package names/only first
 
-typedef enum {
+enum linetype{
     LINE_HEADER,
     LINE_NORMAL,
     LINE_SOFTBROKEN,
-    LINE_BLOCKTERM
-} LineType;
+    LINE_BLOCKTERM,
+};
 
-typedef enum {
+enum searchflag {
     FLAG_INST,
     FLAG_NOINST,
     FLAG_NOCOLOR,
     FLAG_NOWARNDB,
     FLAG_EXACT
-} SearchFlag;
+};
 
-#define setSearchFlag(_f) (flags |= (1 << (_f)))
-#define isSearchFlag(_f) ((flags >> (_f)) & 1)
+enum errors {
+    ERR_NOERROR,
+    ERR_VERSION,
+    ERR_HELP,
+    ERR_BADOPTION,
+};
+
+void setBit(unsigned *var, unsigned bit) {
+    *var |= (1u << (bit));
+}
+
+bool isBit(unsigned var, unsigned bit) {
+    return var & (1u << bit);
+}
 
 void help() {
     printf("\
@@ -75,7 +87,7 @@ size_t lastIndexOf(char *str, char search) {
     return -1;
 }
 
-void formatLine(char* line, LineType type) {
+void formatLine(char* line, int type) {
 
     char *tempToken;
     switch (type) {
@@ -122,7 +134,7 @@ void getWordUntilDelimiter(char *newchar, char *point, char delimiter) {
 
 }
 
-int searchFile(const regex_t *ex, char* installed) {
+int searchFile(const regex_t *ex, char* installed, unsigned flags) {
 
     FILE *fstream = fopen(db_main, "r");
     char line[4096];
@@ -168,14 +180,14 @@ int searchFile(const regex_t *ex, char* installed) {
             if (!regexec(ex, header, 0, NULL, 0)) {
                 installedIndex = strstr(installed, header);
                 if (installedIndex) {
-                    if (isSearchFlag(FLAG_NOINST)) {
+                    if (isBit(flags, FLAG_NOINST)) {
                         continue;
                     }
                     getWordUntilDelimiter(pkgVer, installedIndex, '\n');
                     sprintf(line, "%s %s[ installed ]\n      %sCurrent Version : %s%s", header, COLOR_IMPORTANT, COLOR_LIGHT, COLOR_HEADER, pkgVer);
                 }
                 else {
-                    if (isSearchFlag(FLAG_INST)) {
+                    if (isBit(flags, FLAG_INST)) {
                         continue;
                     }
                     sprintf(line, "%s", header);
@@ -212,56 +224,113 @@ void dbAgeCheck(char* db) {
     }
 }
 
-int main(int argc, char *argv[]) {
+char *strCpy(char *str) {
+    size_t len = strlen(str) + 1;
+    char *nstr = malloc(sizeof(str) * (len));
+    strncpy(nstr, str, len);
+    return nstr;
+}
 
-    char *option;
-    char pattern[256];
-    regex_t ex;
-
-    if (argc < 2) { help(); return 0; }
+int parseArguments(int argc, char **argv, unsigned *flags, char *pattern) {
+    char *tmp;
     for (int i = 1; i < argc ; i++) {
-        option = argv[i];
-        if (option[0] == '-' && option[1] == '-') {
-            if (strcmp(option, "--instonly") == 0) setSearchFlag(FLAG_INST);
-            else if (strcmp(option, "--notinst") == 0) setSearchFlag(FLAG_NOINST);
-            else if (strcmp(option, "--nocolor") == 0) setSearchFlag(FLAG_NOCOLOR);
-            else if (strcmp(option, "--nowarndb") == 0) setSearchFlag(FLAG_NOWARNDB);
-            else if (strcmp(option, "--exact-match") == 0) setSearchFlag(FLAG_EXACT);
-            else if (strcmp(option, "--version") == 0) { printf("%s\n", VERSION); return 0; }
-            else if (strcmp(option, "--help") == 0) { help(); return 0; }
-            else { printf("unknown option! see --help for all options\n"); return 1; }
+        tmp = argv[i];
+        if (tmp[0] == '-' && tmp[1] == '-') {
+            if (strcmp(tmp, "--instonly") == 0) setBit(flags, FLAG_INST);
+            else if (strcmp(tmp, "--notinst") == 0) setBit(flags, FLAG_NOINST);
+            else if (strcmp(tmp, "--nocolor") == 0) setBit(flags, FLAG_NOCOLOR);
+            else if (strcmp(tmp, "--nowarndb") == 0) setBit(flags, FLAG_NOWARNDB);
+            else if (strcmp(tmp, "--exact-match") == 0) setBit(flags, FLAG_EXACT);
+            else if (strcmp(tmp, "--version") == 0) return ERR_VERSION;
+            else if (strcmp(tmp, "--help") == 0) return ERR_HELP;
+            else return ERR_BADOPTION;
         }
-        else if (option[0] == '-') {
-            for(size_t i = 1; i < strlen(option); i++) {
-                switch (option[i])
-                {
-                    case 'I': setSearchFlag(FLAG_INST); break;
-                    case 'N': setSearchFlag(FLAG_NOINST); break;
-                    case 'n': setSearchFlag(FLAG_NOCOLOR); break;
-                    case 'w': setSearchFlag(FLAG_NOWARNDB); break;
-                    case 'e': setSearchFlag(FLAG_EXACT); break;
-                    case 'v': printf("%s\n", VERSION); return 0;
-                    case 'h': help(); return 0;
-                    case '\0': break;
-
+        else if (tmp[0] == '-') {
+            while (*tmp != '\0') {
+                switch (*tmp) {
+                    case '-':
+                        break;
+                    case 'I':
+                        setBit(flags, FLAG_INST);
+                        break;
+                    case 'N':
+                        setBit(flags, FLAG_NOINST);
+                        break;
+                    case 'n':
+                        setBit(flags, FLAG_NOCOLOR);
+                        break;
+                    case 'w':
+                        setBit(flags, FLAG_NOWARNDB);
+                        break;
+                    case 'e':
+                        setBit(flags, FLAG_EXACT);
+                        break;
+                    case 'v':
+                        return ERR_VERSION;
+                    case 'h':
+                        return ERR_HELP;
                     default:
-                        printf("unknown option! see --help for all options\n");
-                        return 1;
+                        return ERR_BADOPTION;
                 }
+                tmp++;
             }
         }
         else {
-            strcpy(pattern, argv[i]);
+            pattern = argv[i];
         }
     }
+    return ERR_NOERROR;
+}
+
+void printError(int errorcode) {
+    switch (errorcode) {
+        case ERR_NOERROR:
+            break;
+
+        case ERR_HELP:
+            help();
+            break;
+
+        case ERR_VERSION:
+            printf("%s\n", VERSION);
+            break;
+
+        case ERR_BADOPTION:
+            fprintf(stderr, "unknown option! see --help for all options\n");
+            break;
+
+        default:
+            fprintf(stderr, "Unknown error code: %d\n", errorcode);
+            break;
+    }
+}
+
+int main(int argc, char *argv[]) {
+
+    int state = 0;
+
+    if (argc < 2) {
+        state = ERR_HELP;
+    }
+
+    unsigned flags = 0;
+    char *pattern = NULL;
+
+    if (state == ERR_NOERROR) {
+        state = parseArguments(argc, argv, &flags, pattern);
+    }
+
+    printError(state);
+    return (state < ERR_BADOPTION) ? 0 : state;
 
     ////// Instantly applyable search flags
+    regex_t ex;
 
-    if (isSearchFlag(FLAG_NOCOLOR)) {
+    if (isBit(flags, FLAG_NOCOLOR)) {
         COLOR_GREEN_ASTERIX = COLOR_HEADER = COLOR_IMPORTANT = COLOR_LIGHT = COLOR_NORMAL = "";
     }
 
-    if (isSearchFlag(FLAG_EXACT)) {
+    if (isBit(flags, FLAG_EXACT)) {
         char tmp[250];
         strcpy(tmp, pattern);
         sprintf(pattern, "^%s$", tmp);
@@ -307,7 +376,7 @@ int main(int argc, char *argv[]) {
     ////// Actual search
 
     printf("\n");
-    if (searchFile(&ex, installedBuffer)) {
+    if (searchFile(&ex, installedBuffer, flags)) {
         free(installedBuffer);
         return -127;
     }
@@ -315,7 +384,7 @@ int main(int argc, char *argv[]) {
     regfree(&ex);
 
     ////// Check database age
-    if (!isSearchFlag(FLAG_NOWARNDB)) {
+    if (!isBit(flags, FLAG_NOWARNDB)) {
         dbAgeCheck(db_main);
     }
 
