@@ -1,13 +1,15 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.15)
+project(esearch C)
 
-project(esearch)
+set(CMAKE_C_STANDARD 99)
 
 # set(CMAKE_VERBOSE_MAKEFILE TRUE)
 add_compile_options(-Wall -Wextra -O2 -pipe -march=x86-64 -std=c99)
 
 set(
-    SOURCES 
-        "src/main.c"      
+    SOURCES
+        src/main.c
+        src/misc.c src/misc.h
 )
 
 add_executable(esearch ${SOURCES})
