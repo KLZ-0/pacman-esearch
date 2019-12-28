@@ -28,6 +28,7 @@ enum errors {
     ERR_HELP,
     ERR_BADOPTION,
     ERR_NOPATTERN,
+    ERR_ALLOC,
 };
 
 void setBit(unsigned *var, unsigned bit);
@@ -35,6 +36,10 @@ void setBit(unsigned *var, unsigned bit);
 bool isBit(unsigned var, unsigned bit);
 
 char *help();
+
+char *strCpy(char *src);
+
+int strAppend(char *pre, char **str, char *post);
 
 /**
  * Parses the strings in argv and sets the appropriate flags

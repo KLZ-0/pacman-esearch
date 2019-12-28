@@ -4,6 +4,8 @@
 
 #include "misc.h"
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 void setBit(unsigned *var, unsigned bit) {
     *var |= (1u << (bit));
@@ -25,6 +27,30 @@ esearch <pkgname> [options]\n\
     --version, -v\tShow version\n\
     --help, -h\t\tShow this message\n\n\
 ";
+}
+
+char *strCpy(char *src) {
+    size_t len = strlen(src) + 1;
+    char *new = malloc(sizeof(src) * len);
+    if (new == NULL) {
+        return NULL;
+    }
+    strncpy(new, src, len);
+    return new;
+}
+
+int strAppend(char *pre, char **str, char *post) {
+    size_t newlen = strlen(*str) + strlen(pre) + strlen(post) + 1;
+    char *new = calloc(newlen, sizeof(*str));
+    if (new == NULL) {
+        return ERR_ALLOC;
+    }
+    strcat(new, pre);
+    strcat(new, *str);
+    strcat(new, post);
+    free(*str);
+    *str = new;
+    return ERR_NOERROR;
 }
 
 int parseArguments(int argc, char **argv, unsigned *flags, char **pattern) {
@@ -72,7 +98,9 @@ int parseArguments(int argc, char **argv, unsigned *flags, char **pattern) {
             }
         }
         else {
-            *pattern = argv[i];
+             if((*pattern = strCpy(argv[i])) == NULL) {
+                 return ERR_ALLOC;
+             }
         }
     }
     if (*pattern == NULL) {

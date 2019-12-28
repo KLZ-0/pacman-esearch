@@ -16,7 +16,7 @@
 #include <stdbool.h>
 
 #ifndef VERSION
-#define VERSION "3.0.1"
+#define VERSION "3.0.2"
 #endif
 
 #define DB ".cache/esearch-database"
@@ -190,18 +190,15 @@ void dbAgeCheck(char* db) {
     }
 }
 
-char *strCpy(char *str) {
-    size_t len = strlen(str) + 1;
-    char *nstr = malloc(sizeof(str) * (len));
-    strncpy(nstr, str, len);
-    return nstr;
-}
-
 /**
  * Prints an error text after execution depending on the error code
  * @param errorcode Valid error code (from errors enum)
  */
 void printError(int errorcode) {
+    if (errorcode >= ERR_BADOPTION) {
+        fprintf(stderr, "Error: ");
+    }
+
     switch (errorcode) {
         case ERR_NOERROR:
             break;
@@ -215,11 +212,15 @@ void printError(int errorcode) {
             break;
 
         case ERR_BADOPTION:
-            fprintf(stderr, "unknown option! see --help for all options\n");
+            fprintf(stderr, "Unknown option! see --help for all options\n");
             break;
 
         case ERR_NOPATTERN:
-            fprintf(stderr, "Pattern not found, check arguments..\n");
+            fprintf(stderr, "Pattern not found or way too long, check arguments..\n");
+            break;
+
+        case ERR_ALLOC:
+            fprintf(stderr, "Allocation returned NULL\n");
             break;
 
         default:
@@ -243,23 +244,24 @@ int main(int argc, char *argv[]) {
         state = parseArguments(argc, argv, &flags, &pattern);
     }
 
+    if (state == ERR_NOERROR && isBit(flags, FLAG_EXACT)) {
+        state = strAppend("^", &pattern, "$");
+    }
+
     if (state == ERR_NOERROR) {
         printf("Pattern: %s\n", pattern);
     }
 
     printError(state);
+    if (pattern != NULL) {
+        free(pattern);
+    }
     return (state < ERR_BADOPTION) ? 0 : state;
 
     ////// Instantly applyable search flags
 
     if (isBit(flags, FLAG_NOCOLOR)) {
         COLOR_GREEN_ASTERIX = COLOR_HEADER = COLOR_IMPORTANT = COLOR_LIGHT = COLOR_NORMAL = "";
-    }
-
-    if (isBit(flags, FLAG_EXACT)) {
-        char tmp[250];
-        strcpy(tmp, pattern);
-        sprintf(pattern, "^%s$", tmp);
     }
 
 
