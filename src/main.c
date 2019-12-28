@@ -8,7 +8,7 @@
 #include <stdbool.h>
 
 #ifndef VERSION
-#define VERSION "3.0.0"
+#define VERSION "3.0.1"
 #endif
 
 #define DB ".cache/esearch-database"
@@ -45,6 +45,7 @@ enum errors {
     ERR_VERSION,
     ERR_HELP,
     ERR_BADOPTION,
+    ERR_NOPATTERN,
 };
 
 void setBit(unsigned *var, unsigned bit) {
@@ -279,6 +280,9 @@ int parseArguments(int argc, char **argv, unsigned *flags, char *pattern) {
             pattern = argv[i];
         }
     }
+    if (pattern == NULL) {
+        return ERR_NOPATTERN;
+    }
     return ERR_NOERROR;
 }
 
@@ -297,6 +301,10 @@ void printError(int errorcode) {
 
         case ERR_BADOPTION:
             fprintf(stderr, "unknown option! see --help for all options\n");
+            break;
+
+        case ERR_NOPATTERN:
+            fprintf(stderr, "Pattern not found, check arguments..\n");
             break;
 
         default:
