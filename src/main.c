@@ -1,3 +1,11 @@
+/**
+ * @file
+ * @author Adrián Kálazi (KLZ-0)
+ * @brief Replacement for pacman -Ss and pacman -Si
+ * @details A little program to prettify the output from the search features of pacman
+ */
+
+#include "misc.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,50 +33,7 @@ char *installedBuffer = 0;
 
 // TODO: Make option to print only found package names/only first
 
-enum linetype{
-    LINE_HEADER,
-    LINE_NORMAL,
-    LINE_SOFTBROKEN,
-    LINE_BLOCKTERM,
-};
 
-enum searchflag {
-    FLAG_INST,
-    FLAG_NOINST,
-    FLAG_NOCOLOR,
-    FLAG_NOWARNDB,
-    FLAG_EXACT
-};
-
-enum errors {
-    ERR_NOERROR,
-    ERR_VERSION,
-    ERR_HELP,
-    ERR_BADOPTION,
-    ERR_NOPATTERN,
-};
-
-void setBit(unsigned *var, unsigned bit) {
-    *var |= (1u << (bit));
-}
-
-bool isBit(unsigned var, unsigned bit) {
-    return var & (1u << bit);
-}
-
-void help() {
-    printf("\
-pacman-esearch (%s) - Replacement for both pacman -Ss and pacman -Si\n\n\
-esearch <pkgname> [options]\n\
-    --instonly, -I\tFind only packages which are installed\n\
-    --notinst, -N\tFind only packages which are NOT installed\n\
-    --nocolor, -n\tDon't use ANSI codes for colored output\n\
-    --exact-match, -e\tShow only exact match\n\
-    --nowarndb, -w\tDo not complain about database age\n\
-    --version, -v\tShow version\n\
-    --help, -h\t\tShow this message\n\n\
-", VERSION);
-}
 
 int startsWith(char *str, char* substr) {
     for(size_t i = 0; i < strlen(substr); i++) {
@@ -232,67 +197,17 @@ char *strCpy(char *str) {
     return nstr;
 }
 
-int parseArguments(int argc, char **argv, unsigned *flags, char *pattern) {
-    char *tmp;
-    for (int i = 1; i < argc ; i++) {
-        tmp = argv[i];
-        if (tmp[0] == '-' && tmp[1] == '-') {
-            if (strcmp(tmp, "--instonly") == 0) setBit(flags, FLAG_INST);
-            else if (strcmp(tmp, "--notinst") == 0) setBit(flags, FLAG_NOINST);
-            else if (strcmp(tmp, "--nocolor") == 0) setBit(flags, FLAG_NOCOLOR);
-            else if (strcmp(tmp, "--nowarndb") == 0) setBit(flags, FLAG_NOWARNDB);
-            else if (strcmp(tmp, "--exact-match") == 0) setBit(flags, FLAG_EXACT);
-            else if (strcmp(tmp, "--version") == 0) return ERR_VERSION;
-            else if (strcmp(tmp, "--help") == 0) return ERR_HELP;
-            else return ERR_BADOPTION;
-        }
-        else if (tmp[0] == '-') {
-            while (*tmp != '\0') {
-                switch (*tmp) {
-                    case '-':
-                        break;
-                    case 'I':
-                        setBit(flags, FLAG_INST);
-                        break;
-                    case 'N':
-                        setBit(flags, FLAG_NOINST);
-                        break;
-                    case 'n':
-                        setBit(flags, FLAG_NOCOLOR);
-                        break;
-                    case 'w':
-                        setBit(flags, FLAG_NOWARNDB);
-                        break;
-                    case 'e':
-                        setBit(flags, FLAG_EXACT);
-                        break;
-                    case 'v':
-                        return ERR_VERSION;
-                    case 'h':
-                        return ERR_HELP;
-                    default:
-                        return ERR_BADOPTION;
-                }
-                tmp++;
-            }
-        }
-        else {
-            pattern = argv[i];
-        }
-    }
-    if (pattern == NULL) {
-        return ERR_NOPATTERN;
-    }
-    return ERR_NOERROR;
-}
-
+/**
+ * Prints an error text after execution depending on the error code
+ * @param errorcode Valid error code (from errors enum)
+ */
 void printError(int errorcode) {
     switch (errorcode) {
         case ERR_NOERROR:
             break;
 
         case ERR_HELP:
-            help();
+            printf(help(), VERSION);
             break;
 
         case ERR_VERSION:
@@ -316,23 +231,26 @@ void printError(int errorcode) {
 int main(int argc, char *argv[]) {
 
     int state = 0;
+    unsigned flags = 0;
+    char *pattern = NULL;
+    regex_t ex;
 
     if (argc < 2) {
         state = ERR_HELP;
     }
 
-    unsigned flags = 0;
-    char *pattern = NULL;
+    if (state == ERR_NOERROR) {
+        state = parseArguments(argc, argv, &flags, &pattern);
+    }
 
     if (state == ERR_NOERROR) {
-        state = parseArguments(argc, argv, &flags, pattern);
+        printf("Pattern: %s\n", pattern);
     }
 
     printError(state);
     return (state < ERR_BADOPTION) ? 0 : state;
 
     ////// Instantly applyable search flags
-    regex_t ex;
 
     if (isBit(flags, FLAG_NOCOLOR)) {
         COLOR_GREEN_ASTERIX = COLOR_HEADER = COLOR_IMPORTANT = COLOR_LIGHT = COLOR_NORMAL = "";
