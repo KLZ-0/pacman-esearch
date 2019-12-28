@@ -223,6 +223,10 @@ void printError(int errorcode) {
             fprintf(stderr, "Allocation returned NULL\n");
             break;
 
+        case ERR_REGCOMP:
+            fprintf(stderr, "Could not compile regex\n");
+            break;
+
         default:
             fprintf(stderr, "Unknown error code: %d\n", errorcode);
             break;
@@ -252,6 +256,16 @@ int main(int argc, char *argv[]) {
         printf("Pattern: %s\n", pattern);
     }
 
+    if (state == ERR_NOERROR) {
+        if (regcomp(&ex, pattern, REG_ICASE)) {
+            state = ERR_REGCOMP;
+        }
+        if (state == ERR_NOERROR) {
+            //TODO Implement search
+        }
+        if (state != ERR_REGCOMP) regfree(&ex);
+    }
+
     printError(state);
     if (pattern != NULL) {
         free(pattern);
@@ -267,15 +281,7 @@ int main(int argc, char *argv[]) {
 
     ////// Additional checks
 
-    if (pattern == NULL) {
-        fprintf(stderr, "Pattern not found, check arguments..\n");
-        return 1;
-    }
 
-    if (regcomp(&ex, pattern, REG_ICASE)) {
-        fprintf(stderr, "Could not compile regex\n");
-        return 1;
-    }
 
     ////// Load installed
 

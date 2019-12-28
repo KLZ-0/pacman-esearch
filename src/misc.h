@@ -29,6 +29,7 @@ enum errors {
     ERR_BADOPTION,
     ERR_NOPATTERN,
     ERR_ALLOC,
+    ERR_REGCOMP,
 };
 
 void setBit(unsigned *var, unsigned bit);
