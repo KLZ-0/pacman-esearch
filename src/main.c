@@ -16,7 +16,7 @@
 #include <stdbool.h>
 
 #ifndef VERSION
-#define VERSION "3.0.2"
+#define VERSION "3.0.3"
 #endif
 
 #define DB ".cache/esearch-database"
@@ -32,8 +32,6 @@ char db_installed[256];
 char *installedBuffer = 0;
 
 // TODO: Make option to print only found package names/only first
-
-
 
 int startsWith(char *str, char* substr) {
     for(size_t i = 0; i < strlen(substr); i++) {
@@ -105,7 +103,7 @@ int searchFile(const regex_t *ex, char* installed, unsigned flags) {
     FILE *fstream = fopen(db_main, "r");
     char line[4096];
 
-    if(fstream == NULL) {
+    if (fstream == NULL) {
         fprintf(stderr, "Error opening file");
         return 1;
     }
@@ -233,95 +231,48 @@ void printError(int errorcode) {
     }
 }
 
+int search();
+
+int run_esearch(int argc, char *argv[]) {
+
+	unsigned flags = 0;
+	int tempstate = ERR_NOERROR;
+	char *pattern = NULL;
+	regex_t re;
+
+	if ((tempstate = parseArguments(argc, argv, &flags, &pattern)) != ERR_NOERROR) {
+		if (pattern != NULL) free(pattern);
+		return tempstate;
+	}
+
+	if (regcomp(&re, pattern, REG_ICASE)) {
+		free(pattern);
+		return ERR_REGCOMP;
+	}
+	free(pattern); // not needed anymore
+
+//	search();
+
+	// has to happen, so we cannot return before it, create another function and check its return value for success
+	// afterwards free the allocated regex
+	regfree(&re);
+
+	return ERR_NOERROR;
+
+}
+
 int main(int argc, char *argv[]) {
 
     int state = 0;
-    unsigned flags = 0;
-    char *pattern = NULL;
-    regex_t ex;
 
-    if (argc < 2) {
-        state = ERR_HELP;
-    }
-
-    if (state == ERR_NOERROR) {
-        state = parseArguments(argc, argv, &flags, &pattern);
-    }
-
-    if (state == ERR_NOERROR && isBit(flags, FLAG_EXACT)) {
-        state = strAppend("^", &pattern, "$");
-    }
-
-    if (state == ERR_NOERROR) {
-        printf("Pattern: %s\n", pattern);
-    }
-
-    if (state == ERR_NOERROR) {
-        if (regcomp(&ex, pattern, REG_ICASE)) {
-            state = ERR_REGCOMP;
-        }
-        if (state == ERR_NOERROR) {
-            //TODO Implement search
-        }
-        if (state != ERR_REGCOMP) regfree(&ex);
-    }
+	if (argc < 2) {
+		state = ERR_HELP;
+	}
+	else {
+		state = run_esearch(argc, argv);
+	}
 
     printError(state);
-    if (pattern != NULL) {
-        free(pattern);
-    }
-    return (state < ERR_BADOPTION) ? 0 : state;
-
-    ////// Instantly applyable search flags
-
-    if (isBit(flags, FLAG_NOCOLOR)) {
-        COLOR_GREEN_ASTERIX = COLOR_HEADER = COLOR_IMPORTANT = COLOR_LIGHT = COLOR_NORMAL = "";
-    }
-
-
-    ////// Additional checks
-
-
-
-    ////// Load installed
-
-    sprintf(db_main, "%s/%s", getenv("HOME"), DB);
-    sprintf(db_installed, "%s/%s-installed", getenv("HOME"), DB);
-    // TODO: Add option to disable database time check
-
-    long length;
-    FILE *installedFile = fopen (db_installed, "r");
-    if(installedFile == NULL) {
-        fprintf(stderr, "Error opening file");
-        return 1;
-    }
-
-    if (installedFile) {
-        fseek (installedFile, 0, SEEK_END);
-        length = ftell (installedFile);
-        fseek (installedFile, 0, SEEK_SET);
-        installedBuffer = malloc (length);
-        if (installedBuffer) {
-            fread (installedBuffer, 1, length, installedFile);
-        }
-        fclose (installedFile);
-    }
-
-    ////// Actual search
-
-    printf("\n");
-    if (searchFile(&ex, installedBuffer, flags)) {
-        free(installedBuffer);
-        return -127;
-    }
-    free(installedBuffer);
-    regfree(&ex);
-
-    ////// Check database age
-    if (!isBit(flags, FLAG_NOWARNDB)) {
-        dbAgeCheck(db_main);
-    }
-
-    return 0;
+    return (state < ERR_BADOPTION) ? EXIT_SUCCESS : state;
 
 }

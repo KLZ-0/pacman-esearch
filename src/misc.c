@@ -53,6 +53,27 @@ int strAppend(char *pre, char **str, char *post) {
 	return ERR_NOERROR;
 }
 
+int applyFlags(char **pattern, unsigned flags) {
+
+	if (isBit(flags, FLAG_EXACT)) {
+		int tmp = strAppend("^", pattern, "$");
+		if (tmp != ERR_NOERROR) {
+			return tmp;
+		}
+	}
+	return ERR_NOERROR;
+
+}
+
+/**
+ * Parses command line arguments
+ * @param argc
+ * @param argv
+ * @param flags
+ * @param pattern
+ * @post @p pattern will be set to an allocated adress pointing to a valid string
+ * @return
+ */
 int parseArguments(int argc, char **argv, unsigned *flags, char **pattern) {
 	char *tmp;
 	for (int i = 1; i < argc ; i++) {
@@ -98,7 +119,10 @@ int parseArguments(int argc, char **argv, unsigned *flags, char **pattern) {
 			}
 		}
 		else {
-			if(*pattern = strCpy(argv[i])) == NULL) {
+			if (*pattern != NULL) {
+				free(*pattern);
+			}
+			if ((*pattern = strCpy(argv[i])) == NULL) {
 				return ERR_ALLOC;
 			}
 		}
@@ -106,5 +130,12 @@ int parseArguments(int argc, char **argv, unsigned *flags, char **pattern) {
 	if (*pattern == NULL) {
 		return ERR_NOPATTERN;
 	}
+
+	int res = applyFlags(pattern, *flags);
+	if (res != ERR_NOERROR) {
+		return res;
+	}
+
 	return ERR_NOERROR;
+
 }

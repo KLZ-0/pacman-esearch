@@ -40,6 +40,8 @@ char *help();
 
 char *strCpy(char *src);
 
+int applyFlags(char **pattern, unsigned flags);
+
 int strAppend(char *pre, char **str, char *post);
 
 /**
