@@ -8,28 +8,28 @@
 #include <stdbool.h>
 
 enum linetype{
-    LINE_HEADER,
-    LINE_NORMAL,
-    LINE_SOFTBROKEN,
-    LINE_BLOCKTERM,
+	LINE_HEADER,
+	LINE_NORMAL,
+	LINE_SOFTBROKEN,
+	LINE_BLOCKTERM,
 };
 
 enum searchflag {
-    FLAG_INST,
-    FLAG_NOINST,
-    FLAG_NOCOLOR,
-    FLAG_NOWARNDB,
-    FLAG_EXACT
+	FLAG_INST,
+	FLAG_NOINST,
+	FLAG_NOCOLOR,
+	FLAG_NOWARNDB,
+	FLAG_EXACT
 };
 
 enum errors {
-    ERR_NOERROR,
-    ERR_VERSION,
-    ERR_HELP,
-    ERR_BADOPTION,
-    ERR_NOPATTERN,
-    ERR_ALLOC,
-    ERR_REGCOMP,
+	ERR_NOERROR,
+	ERR_VERSION,
+	ERR_HELP,
+	ERR_BADOPTION,
+	ERR_NOPATTERN,
+	ERR_ALLOC,
+	ERR_REGCOMP,
 };
 
 void setBit(unsigned *var, unsigned bit);
