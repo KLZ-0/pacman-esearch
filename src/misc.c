@@ -1,11 +1,6 @@
-//
-// Created by klz on 12/28/19.
-//
-
 #include "misc.h"
 #include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 void setBit(unsigned *var, unsigned bit) {
 	*var |= (1u << (bit));

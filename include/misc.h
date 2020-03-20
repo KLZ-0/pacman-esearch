@@ -1,7 +1,3 @@
-//
-// Created by klz on 12/28/19.
-//
-
 #ifndef ESEARCH_MISC_H
 #define ESEARCH_MISC_H
 

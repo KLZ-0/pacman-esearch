@@ -1,36 +1,38 @@
 cmake_minimum_required(VERSION 3.15)
 project(esearch C)
 
-set(CMAKE_C_STANDARD 99)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
 
-# set(CMAKE_VERBOSE_MAKEFILE TRUE)
-add_compile_options(-Wall -Wextra -O2 -pipe -march=x86-64 -std=c99)
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 
-set(
-    SOURCES
-        src/main.c
-        src/misc.c src/misc.h
-)
+add_compile_options(-Wall -pedantic)
 
-add_executable(esearch ${SOURCES})
+set(CMAKE_C_STANDARD 11)
 
-enable_testing()
+include_directories(./include/)
 
-# Basic functionality tests
-add_test(noargs esearch)
-add_test(version esearch -v)
-add_test(help esearch -h)
+add_executable(esearch src/main.c src/misc.c)
 
-# Option tests
-add_test(search esearch plasma-desktop)
-add_test(instonly esearch -I plasma)
-add_test(notinst esearch -N plasma)
-add_test(nocolor esearch -n plasma-desktop)
-add_test(nowarndb esearch -w plasma-desktop)
+#enable_testing()
+#
+## Basic functionality tests
+#add_test(noargs esearch)
+#add_test(version esearch -v)
+#add_test(help esearch -h)
+#
+## Option tests
+#add_test(search esearch plasma-desktop)
+#add_test(instonly esearch -I plasma)
+#add_test(notinst esearch -N plasma)
+#add_test(nocolor esearch -n plasma-desktop)
+#add_test(nowarndb esearch -w plasma-desktop)
+#
+## merged option tests
+#add_test(mergedsearchonly esearch -enI gcc)
+#add_test(mergedsearchmixed esearch -n --notinst plasma)
 
-# merged option tests
-add_test(mergedsearchonly esearch -enI gcc)
-add_test(mergedsearchmixed esearch -n --notinst plasma)
-
-install(TARGETS esearch RUNTIME DESTINATION bin)
-install(PROGRAMS "eupdatedb.sh" DESTINATION bin RENAME "eupdatedb")
+#install(TARGETS esearch RUNTIME DESTINATION bin)
+#install(PROGRAMS "eupdatedb.sh" DESTINATION bin RENAME "eupdatedb")
