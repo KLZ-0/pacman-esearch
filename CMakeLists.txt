@@ -14,7 +14,7 @@ set(CMAKE_C_STANDARD 11)
 
 include_directories(./include/)
 
-add_executable(esearch src/main.c src/misc.c)
+add_executable(esearch src/esearch.c src/error.c src/util.c)
 
 #enable_testing()
 #
