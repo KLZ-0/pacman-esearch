@@ -18,6 +18,7 @@ mkdir --parents ~/.cache
 
 test $quiet -eq 0 && echo -e "\033[1;34m [1/2] \033[0m Gathering installed database.."
 pacman -Qe > $HOME/.cache/esearch-database-installed || echo " * eupdatedb: Failed to load/save database"
+pacman -Qd >> $HOME/.cache/esearch-database-installed || echo " * eupdatedb: Failed to load/save database"
 test $quiet -eq 0 && echo -e "\033[1;34m [2/2] \033[0m Gathering global database.."
 pacman -Si > $HOME/.cache/esearch-database || echo " * eupdatedb: Failed to load/save database"
 
