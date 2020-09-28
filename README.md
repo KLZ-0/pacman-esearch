@@ -26,24 +26,23 @@ The original C++ version can be found in the `v1` branch of this repository
 
 ## From source
 
-Clone this repository and cd into it:
+Clone this repository:
 
 `git clone https://github.com/KLZ-0/pacman-esearch.git && cd pacman-esearch`
 
+Compile the executable:
 
-Execute cmake and compile from source:
+`make`
 
-`cmake -B ./build ./ && make -C build/`
+Install to `/usr/bin/`:
 
-Install to `/usr/local/bin/`:
+`sudo make install`
 
-`sudo make install -C build/`
-
-Create the search index:
+Create the search index after installation:
 
 `eupdatedb`
 
-NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eupdatedb as regular user (the one who will be using esearch) -- For example the search index for user `john` will be stored in `/home/john/.cache/`
+NOTE: the search index is stored in `$HOME/.cache/esearch/` on per-user basis so run eupdatedb as regular user (the one who will be using esearch) -- For example the search index for user `john` will be stored in `/home/john/.cache/esearch/`
 
 # Usage
 
