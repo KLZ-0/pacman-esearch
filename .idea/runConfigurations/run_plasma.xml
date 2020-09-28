@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="run_plasma" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="plasma" PASS_PARENT_ENVS_2="true" PROJECT_NAME="esearch" TARGET_NAME="esearch" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="esearch" RUN_TARGET_NAME="esearch">
-    <method v="2">
-      <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-    </method>
-  </configuration>
-</component>
