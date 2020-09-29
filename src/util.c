@@ -1,5 +1,7 @@
 #include "util.h"
+#include "esearch.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -26,4 +28,18 @@ char* getHomePath(const char* relpath) {
 	strcat(fullpath, relpath);
 
 	return fullpath;
+}
+
+void help() {
+	printf("\
+pacman-esearch (%s) - Replacement for both pacman -Ss and pacman -Si\n\n\
+esearch <pkgname> [options]\n\
+    --instonly, -I\tFind only packages which are installed\n\
+    --notinst, -N\tFind only packages which are NOT installed\n\
+    --nocolor, -n\tDon't use ANSI codes for colored output\n\
+    --exact-match, -e\tShow only exact match\n\
+    --nowarndb, -w\tDo not complain about database age\n\
+    --version, -v\tShow version\n\
+    --help, -h\t\tShow this message\n\n\
+", VERSION);
 }
