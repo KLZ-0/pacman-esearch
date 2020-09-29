@@ -1,26 +1,76 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-quiet=0
-while [[ $# -gt 0 ]]
-do
-key="$1"
+import sys
+import os
+from subprocess import check_output
 
-case $key in
-    -q|--quiet)
-    quiet=1
-    shift
-    ;;
-esac
-done
+# CONFIG
+##########################
 
-# if .cache not exists, create it
-mkdir --parents ~/.cache/esearch
+padding = 18
+installed_headline = "Installed version"
 
-test $quiet -eq 0 && echo -e "\033[1;34m [1/2] \033[0m Gathering installed database.."
-pacman -Qe > $HOME/.cache/esearch/installed || echo " * eupdatedb: Failed to load/save database"
-pacman -Qd >> $HOME/.cache/esearch/installed || echo " * eupdatedb: Failed to load/save database"
-test $quiet -eq 0 && echo -e "\033[1;34m [2/2] \033[0m Gathering global database.."
-pacman -Si > $HOME/.cache/esearch/index || echo " * eupdatedb: Failed to load/save database"
+##########################
 
-test $quiet -eq 0 && echo -e "\033[1;33m *** \033[0m eupdatedb finished successfully with $(pacman -Ssq | wc -l) global and $(pacman -Qqe | wc -l) installed packages\nSize of search index:"
-test $quiet -eq 0 && du -sh $HOME/.cache/esearch/index $HOME/.cache/esearch/installed
+form_header = "\"{semicolon_pos}\"" # position of ":"
+form = "{key:{padding}} : {value}\n"
+form_alt = "{key:{padding}}   {value}\n"
+index_dir = "{home}/.cache/esearch".format(home=os.environ['HOME'])
+index_location = "{index_dir}/index".format(index_dir=index_dir)
+
+pkg_installed = check_output(["pacman", "-Qe"]).decode("utf-8") + check_output(["pacman", "-Qd"]).decode("utf-8")
+pkg_all = check_output(["pacman", "-Si"]).decode("utf-8").strip().split("\n\n")
+
+installed_dict = {}
+for pkg in pkg_installed.strip().split("\n"):
+    pkg = pkg.split(" ")
+    installed_dict[pkg[0]] = pkg[1]
+
+staticrepo = ""
+ver_installed = ""
+
+os.makedirs(index_dir, exist_ok=True)
+with open(index_location, "w") as f:
+    f.write(chr(padding + 1))
+
+    for package in pkg_all:
+        for line in package.split("\n"):
+            if line.startswith(" "):  # properties with only one part
+                key = ""
+                value = line.strip()
+                formatted_line = form_alt.format(key=key, value=value, padding=padding)
+            else:
+                line = [word.strip() for word in line.split(":")]
+                key = line[0]
+                value = line[1]
+                formatted_line = form.format(key=key, value=value, padding=padding)
+
+            if key == "Repository":
+                staticrepo = formatted_line
+                continue
+
+            elif key == "Name":
+                ver_installed = installed_dict.get(value, "[ Not Installed ]")
+
+                # PKG name
+                f.write("-")
+                f.write("0" if ver_installed == "[ Not Installed ]" else "1")
+                f.write(value)
+                f.write("\n")
+
+            elif key == "Version":
+                f.write(formatted_line)
+                f.write(form.format(key=installed_headline, value=ver_installed, padding=padding))
+
+            else:
+                f.write(formatted_line)
+
+        # PKG repo to the end
+        f.write(staticrepo)
+        f.write("\n")
+
+if "-q" not in sys.argv and "--quiet" not in sys.argv:
+    print("\033[1;33m *** \033[0m eupdatedb finished successfully "
+          "with {all} global and "
+          "{installed} installed packages".format(all=len(pkg_all), installed=len(installed_dict)))
+    print("Size of search index: {size:.2f} MiB".format(size=os.path.getsize(index_location)/pow(2, 20)))
