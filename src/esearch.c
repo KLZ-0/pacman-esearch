@@ -35,7 +35,7 @@ int getDBheader(FILE *db, uint8_t *indent_size) {
 	return EXIT_SUCCESS;
 }
 
-int traverseDB(FILE *db) {
+int traverseDB(FILE *db, uint8_t arg_opts, regex_t *regexp) {
 	uint8_t indent_size;
 	if (getDBheader(db, &indent_size) == EXIT_FAILURE) {
 		return EXIT_FAILURE;
@@ -103,26 +103,39 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 }
 
 int main(int argc, char *argv[]) {
-	char* db_filename = getHomePath(INDEX);
+	int ret = EXIT_SUCCESS;
+	FILE *db = NULL;
+	char *db_filename = NULL;
+
+	db_filename = getHomePath(INDEX);
 
 	uint8_t arg_opts = 0;
 	char pattern[PATTERN_LEN_MAX];
 
-	int ret = parseArgs(argc, argv, &arg_opts, pattern);
+	ret = parseArgs(argc, argv, &arg_opts, pattern);
 	if (ret != INT_MAX) {
-		return ret;
+		goto cleanup;
 	}
 
-	FILE *db = fopen(db_filename, "r");
+	db = fopen(db_filename, "r");
 	if (db == NULL) {
-		// TODO: Handle in error.h
-		error_exit("Failed to open database, did you run eupdatedb?\n");
+		error("Failed to open database, did you run eupdatedb?\n");
+		ret = EXIT_FAILURE;
+		goto cleanup;
 	}
 
-	ret = traverseDB(db);
+	regex_t regexp;
+	ret = regcomp(&regexp, pattern, REG_ICASE);
+	if (ret != EXIT_SUCCESS) {
+		error("Could not compile regex\n");
+		goto cleanup;
+	}
 
-	fclose(db);
+	ret = traverseDB(db, arg_opts, &regexp);
+
+	cleanup:
 	free(db_filename);
+	if (db != NULL) { fclose(db); }
 
 	return ret;
 }
