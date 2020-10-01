@@ -106,11 +106,12 @@ int main(int argc, char *argv[]) {
 	int ret = EXIT_SUCCESS;
 	FILE *db = NULL;
 	char *db_filename = NULL;
+	regex_t regexp = {0};
 
 	db_filename = getHomePath(INDEX);
 
 	uint8_t arg_opts = 0;
-	char pattern[PATTERN_LEN_MAX];
+	char pattern[PATTERN_LEN_MAX] = {0};
 
 	ret = parseArgs(argc, argv, &arg_opts, pattern);
 	if (ret != INT_MAX) {
@@ -124,7 +125,6 @@ int main(int argc, char *argv[]) {
 		goto cleanup;
 	}
 
-	regex_t regexp;
 	ret = regcomp(&regexp, pattern, REG_ICASE);
 	if (ret != EXIT_SUCCESS) {
 		error("Could not compile regex\n");
@@ -136,6 +136,7 @@ int main(int argc, char *argv[]) {
 	cleanup:
 	free(db_filename);
 	if (db != NULL) { fclose(db); }
+	regfree(&regexp);
 
 	return ret;
 }
