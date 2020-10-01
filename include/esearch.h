@@ -5,7 +5,7 @@
  * config
  */
 
-#define VERSION "4.2.0"
+#define VERSION "4.2.1"
 #define INDEX "/.cache/esearch/index"
 #define PATTERN_LEN_MAX 256
 #define LINE_BUFFER_SIZE 2048

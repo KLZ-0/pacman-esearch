@@ -15,6 +15,8 @@
 char *COLOR_IMPORTANT = "\033[1;31m";
 char *COLOR_HEADER = "\033[0;1m";
 char *COLOR_BOLDGREEN = "\033[1;32m";
+char *COLOR_WARN = "\033[1;35m";
+char *COLOR_ERROR = "\033[1;31m";
 char *COLOR_RESET = "\033[0;0m";
 char *COLOR_LIGHT = "\033[0;32m";
 
@@ -26,7 +28,7 @@ int getDBheader(FILE *db, uint8_t *indent_size) {
 	ret = fread(indent_size, sizeof(uint8_t), 1, db);
 	if (ret != 1) {
 		// TODO: Handle in error.h
-		fprintf(stderr, "Failed to read from database, did you run eupdatedb?");
+		error("Failed to read from database, did you run eupdatedb?\n");
 		return EXIT_FAILURE;
 	}
 
@@ -67,7 +69,7 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 			else if (strcmp(option, "--exact-match") == 0) setFlag(*arg_opts, FLAG_EXACT);
 			else if (strcmp(option, "--version") == 0) { printf("%s\n", VERSION); return EXIT_SUCCESS; }
 			else if (strcmp(option, "--help") == 0) { help(); return EXIT_SUCCESS; }
-			else { printf("unknown option! see --help for all options\n"); return EXIT_FAILURE; }
+			else { error("unknown option! see --help for all options\n"); return EXIT_FAILURE; }
 		}
 		else if (option[0] == '-') {
 			for(size_t optc = 1; optc < strlen(option); optc++) {
@@ -82,7 +84,7 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 					case '\0': break;
 
 					default:
-						printf("unknown option! see --help for all options\n");
+						error("unknown option! see --help for all options\n");
 						return EXIT_FAILURE;
 				}
 			}
@@ -109,8 +111,7 @@ int main(int argc, char *argv[]) {
 	FILE *db = fopen(db_filename, "r");
 	if (db == NULL) {
 		// TODO: Handle in error.h
-		fprintf(stderr, "Failed to open database, did you run eupdatedb?");
-		return EXIT_FAILURE;
+		error_exit("Failed to open database, did you run eupdatedb?\n");
 	}
 
 	ret = traverseDB(db);
