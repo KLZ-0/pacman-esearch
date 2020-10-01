@@ -5,22 +5,21 @@
  * config
  */
 
-#define VERSION "4.1.0"
+#define VERSION "4.2.0"
 #define INDEX "/.cache/esearch/index"
 #define PATTERN_LEN_MAX 256
+#define LINE_BUFFER_SIZE 2048
 
 /*
  * defines
  */
 
+// parser related stuff
 #define FLAG_INST 0u
 #define FLAG_NOINST 1u
 #define FLAG_NOCOLOR 2u
 #define FLAG_NOWARNDB 3u
 #define FLAG_EXACT 4u
-
-#define PARSE_OK (UINT8_MAX - 1)
-#define PARSE_ERR (UINT8_MAX)
 
 /*
  * macros
