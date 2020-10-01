@@ -94,6 +94,11 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 		}
 	}
 
+	if (pattern[0] == '\0') {
+		error("Pattern not found, check arguments..\n");
+		return EXIT_FAILURE;
+	}
+
 	return INT_MAX;
 }
 
@@ -116,7 +121,6 @@ int main(int argc, char *argv[]) {
 
 	ret = traverseDB(db);
 
-	cleanup:
 	fclose(db);
 	free(db_filename);
 

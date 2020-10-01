@@ -33,7 +33,7 @@ char* getHomePath(const char* relpath) {
 void help() {
 	printf("\
 pacman-esearch (%s) - Replacement for both pacman -Ss and pacman -Si\n\n\
-esearch <pkgname> [options]\n\
+esearch <regexp> [options]\n\
     --instonly, -I\tFind only packages which are installed\n\
     --notinst, -N\tFind only packages which are NOT installed\n\
     --nocolor, -n\tDon't use ANSI codes for colored output\n\
