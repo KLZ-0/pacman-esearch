@@ -21,13 +21,10 @@ char *COLOR_ERROR = "\033[1;31m";
 char *COLOR_RESET = "\033[0;0m";
 
 int esearch(int argc, char *argv[], char **db_filename, FILE **db, regex_t *regexp) {
-	int ret = EXIT_SUCCESS;
-
 	// argument parsing
 	uint8_t arg_opts = 0;
 	char pattern[PATTERN_LEN_MAX] = {0};
-	ret = parse_args(argc, argv, &arg_opts, pattern);
-	if (ret != INT_MAX) {
+	if (parse_args(argc, argv, &arg_opts, pattern) != INT_MAX) {
 		return EXIT_FAILURE;
 	}
 
@@ -42,19 +39,18 @@ int esearch(int argc, char *argv[], char **db_filename, FILE **db, regex_t *rege
 	*db = fopen(*db_filename, "r");
 	if (*db == NULL) {
 		error("Failed to open database, did you run eupdatedb?\n");
-		ret = EXIT_FAILURE;
+		return EXIT_FAILURE;
 	}
 
 	// compile regex
-	ret = regcomp(regexp, pattern, REG_ICASE);
-	if (ret != EXIT_SUCCESS) {
+	if (regcomp(regexp, pattern, REG_ICASE) != EXIT_SUCCESS) {
 		error("Could not compile regex\n");
 		return EXIT_FAILURE;
 	}
 
 	// traverse database
 	printf("[ Results for search key : %s%s%s ]\n\n", COLOR_BOLD, pattern, COLOR_RESET);
-	ret = db_traverse(*db, arg_opts, regexp);
+	int ret = db_traverse(*db, arg_opts, regexp);
 	db_age_check(*db_filename, arg_opts);
 
 	return ret;
