@@ -6,7 +6,7 @@
  */
 
 #define VERSION "4.3.2"
-#define INDEX "/.cache/esearch/index"
+#define DATABASE "/.cache/esearch/index"
 #define PATTERN_LEN_MAX 256
 #define LINE_BUFFER_SIZE 2048
 #define DB_WARN_AGE 604800 // 7 days

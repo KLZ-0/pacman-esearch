@@ -23,50 +23,55 @@ char *COLOR_RESET = "\033[0;0m";
 // TODO: Refactor
 // TODO: Reformat
 
-int main(int argc, char *argv[]) {
+int esearch(int argc, char *argv[], char **db_filename, FILE **db, regex_t *regexp) {
 	int ret = EXIT_SUCCESS;
-	FILE *db = NULL;
-	char *db_filename = NULL;
-	regex_t regexp = {0};
 
 	// argument parsing
 	uint8_t arg_opts = 0;
 	char pattern[PATTERN_LEN_MAX] = {0};
 	ret = parseArgs(argc, argv, &arg_opts, pattern);
 	if (ret != INT_MAX) {
-		goto cleanup;
+		return EXIT_FAILURE;
 	}
 
 	// query database path
-	db_filename = getHomePath(INDEX);
-	if (db_filename == NULL) {
+	*db_filename = getHomePath(DATABASE);
+	if (*db_filename == NULL) {
 		error("Home directory not found, is your $HOME set?\n");
-		ret = EXIT_FAILURE;
-		goto cleanup;
+		return EXIT_FAILURE;
 	}
 
 	// open database
-	db = fopen(db_filename, "r");
-	if (db == NULL) {
+	*db = fopen(*db_filename, "r");
+	if (*db == NULL) {
 		error("Failed to open database, did you run eupdatedb?\n");
 		ret = EXIT_FAILURE;
-		goto cleanup;
 	}
 
 	// compile regex
-	ret = regcomp(&regexp, pattern, REG_ICASE);
+	ret = regcomp(regexp, pattern, REG_ICASE);
 	if (ret != EXIT_SUCCESS) {
 		error("Could not compile regex\n");
-		goto cleanup;
+		return EXIT_FAILURE;
 	}
 
 	// traverse database
 	printf("[ Results for search key : %s%s%s ]\n\n", COLOR_BOLD, pattern, COLOR_RESET);
-	ret = traverseDB(db, arg_opts, &regexp);
-	dbAgeCheck(db_filename, arg_opts);
+	ret = traverseDB(*db, arg_opts, regexp);
+	dbAgeCheck(*db_filename, arg_opts);
+
+	return ret;
+}
+
+int main(int argc, char *argv[]) {
+	int ret = EXIT_SUCCESS;
+	char *db_filename = NULL;
+	FILE *db = NULL;
+	regex_t regexp = {0};
+
+	ret = esearch(argc, argv, &db_filename, &db, &regexp);
 
 	// cleanup
-	cleanup:
 	free(db_filename);
 	if (db != NULL) { fclose(db); }
 	regfree(&regexp);
