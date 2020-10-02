@@ -20,8 +20,6 @@ char *COLOR_WARN = "\033[1;35m";
 char *COLOR_ERROR = "\033[1;31m";
 char *COLOR_RESET = "\033[0;0m";
 
-// TODO: Reformat
-
 int esearch(int argc, char *argv[], char **db_filename, FILE **db, regex_t *regexp) {
 	int ret = EXIT_SUCCESS;
 

@@ -15,7 +15,7 @@
  * @param relpath relative path "~/{relpath}"
  * @return Allocated char* with the full path or NULL on error, it needs to be freed afterwards
  */
-char* getHomePath(const char* relpath) {
+char *getHomePath(const char *relpath) {
 	struct passwd *pw = getpwuid(getuid());
 	if (pw == NULL)
 		return NULL;
@@ -24,7 +24,7 @@ char* getHomePath(const char* relpath) {
 	if (homedir == NULL)
 		return NULL;
 
-	char* fullpath = malloc(strlen(homedir) + strlen(relpath) + 1);
+	char *fullpath = malloc(strlen(homedir) + strlen(relpath) + 1);
 	if (fullpath == NULL)
 		return NULL;
 	strcpy(fullpath, homedir);
@@ -50,8 +50,11 @@ esearch <regexp> [options]\n\
 int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 	char *tmp_pattern = NULL;
 
-	if (argc < 2) { help(); return EXIT_SUCCESS; }
-	for (int opti = 1; opti < argc ; opti++) {
+	if (argc < 2) {
+		help();
+		return EXIT_SUCCESS;
+	}
+	for (int opti = 1; opti < argc; opti++) {
 		char *option = argv[opti];
 		if (option[0] == '-' && option[1] == '-') {
 			if (strcmp(option, "--instonly") == 0) setFlag(*arg_opts, FLAG_INST);
@@ -59,29 +62,51 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 			else if (strcmp(option, "--nocolor") == 0) setFlag(*arg_opts, FLAG_NOCOLOR);
 			else if (strcmp(option, "--nowarndb") == 0) setFlag(*arg_opts, FLAG_NOWARNDB);
 			else if (strcmp(option, "--exact-match") == 0) setFlag(*arg_opts, FLAG_EXACT);
-			else if (strcmp(option, "--version") == 0) { printf("%s\n", VERSION); return EXIT_SUCCESS; }
-			else if (strcmp(option, "--help") == 0) { help(); return EXIT_SUCCESS; }
-			else { error("unknown option! see --help for all options\n"); return EXIT_FAILURE; }
-		}
-		else if (option[0] == '-') {
-			for(size_t optc = 1; optc < strlen(option); optc++) {
+			else if (strcmp(option, "--version") == 0) {
+				printf("%s\n", VERSION);
+				return EXIT_SUCCESS;
+			}
+			else if (strcmp(option, "--help") == 0) {
+				help();
+				return EXIT_SUCCESS;
+			}
+			else {
+				error("unknown option! see --help for all options\n");
+				return EXIT_FAILURE;
+			}
+		} else if (option[0] == '-') {
+			for (size_t optc = 1; optc < strlen(option); optc++) {
 				switch (option[optc]) {
-					case 'I': setFlag(*arg_opts, FLAG_INST); break;
-					case 'N': setFlag(*arg_opts, FLAG_NOINST); break;
-					case 'n': setFlag(*arg_opts, FLAG_NOCOLOR); break;
-					case 'w': setFlag(*arg_opts, FLAG_NOWARNDB); break;
-					case 'e': setFlag(*arg_opts, FLAG_EXACT); break;
-					case 'v': printf("%s\n", VERSION); return EXIT_SUCCESS;
-					case 'h': help(); return EXIT_SUCCESS;
-					case '\0': break;
+					case 'I':
+						setFlag(*arg_opts, FLAG_INST);
+						break;
+					case 'N':
+						setFlag(*arg_opts, FLAG_NOINST);
+						break;
+					case 'n':
+						setFlag(*arg_opts, FLAG_NOCOLOR);
+						break;
+					case 'w':
+						setFlag(*arg_opts, FLAG_NOWARNDB);
+						break;
+					case 'e':
+						setFlag(*arg_opts, FLAG_EXACT);
+						break;
+					case 'v':
+						printf("%s\n", VERSION);
+						return EXIT_SUCCESS;
+					case 'h':
+						help();
+						return EXIT_SUCCESS;
+					case '\0':
+						break;
 
 					default:
 						error("unknown option! see --help for all options\n");
 						return EXIT_FAILURE;
 				}
 			}
-		}
-		else {
+		} else {
 			tmp_pattern = argv[opti];
 		}
 	}
@@ -93,15 +118,15 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 	}
 
 	if (isFlag(*arg_opts, FLAG_EXACT)) {
-		char *lastchar = memccpy(pattern+1, tmp_pattern, '\0', PATTERN_LEN_MAX-3);
+		char *lastchar = memccpy(pattern + 1, tmp_pattern, '\0', PATTERN_LEN_MAX - 3);
 		if (lastchar == NULL) {
 			error("Pattern too long, set PATTERN_LEN_MAX in ('include/def.h') to an appropriate value and recompile esearch");
 			return EXIT_FAILURE;
 		}
 		pattern[0] = '^';
-		*(lastchar-1) = '$';
+		*(lastchar - 1) = '$';
 	} else {
-		memccpy(pattern, tmp_pattern, '\0', PATTERN_LEN_MAX-1);
+		memccpy(pattern, tmp_pattern, '\0', PATTERN_LEN_MAX - 1);
 	}
 
 	if (isFlag(*arg_opts, FLAG_NOCOLOR)) {

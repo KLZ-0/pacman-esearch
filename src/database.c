@@ -9,7 +9,7 @@
 #include "error.h"
 #include "colors.h"
 
-void dbAgeCheck(char* db_filename, uint8_t arg_opts) {
+void dbAgeCheck(char *db_filename, uint8_t arg_opts) {
 	if (isFlag(arg_opts, FLAG_NOWARNDB)) {
 		return;
 	}
@@ -20,9 +20,9 @@ void dbAgeCheck(char* db_filename, uint8_t arg_opts) {
 	time_t now;
 	time(&now);
 
-	time_t dbage = now-dbcreation;
+	time_t dbage = now - dbcreation;
 	if (dbage > DB_WARN_AGE) { // 7 days
-		warn("You should run eupdatedb, the last update was %lu days ago - on %s", dbage/SEC_DAY, ctime(&dbcreation));
+		warn("You should run eupdatedb, the last update was %lu days ago - on %s", dbage / SEC_DAY, ctime(&dbcreation));
 		info("to disable this message run esearch with -w\n");
 	}
 }
@@ -54,21 +54,23 @@ int traverseDB(FILE *db, uint8_t arg_opts, const regex_t *regexp) {
 		// '-' signals a new package
 		if (line_buf[0] == '-') {
 			bool installed = line_buf[1] - '0';
-			char *pkg_name = strtok(line_buf+2, "\n");
+			char *pkg_name = strtok(line_buf + 2, "\n");
 			pkg_print = regexec(regexp, pkg_name, 0, NULL, 0) == EXIT_SUCCESS;
 			if ((isFlag(arg_opts, FLAG_INST) && !installed) || (isFlag(arg_opts, FLAG_NOINST) && installed)) {
 				pkg_print = false;
 			}
 
 			if (pkg_print) {
-				printf("%s*%s  %s%s%s%s\n", COLOR_BOLDGREEN, COLOR_BOLD, pkg_name, COLOR_BOLDRED, (installed) ? " [ installed ]" : "", COLOR_RESET);
+				printf("%s*%s  %s%s%s%s\n", COLOR_BOLDGREEN, COLOR_BOLD, pkg_name, COLOR_BOLDRED,
+					   (installed) ? " [ installed ]" : "", COLOR_RESET);
 			}
 		} else if (pkg_print) {
 			// test if last line
 			if (line_buf[0] == '\n') {
 				printf("\n");
 			} else {
-				printf("      %s%.*s%s%s%s", COLOR_LIGHTGREEN, indent_size, line_buf, COLOR_BOLD, line_buf + indent_size, COLOR_RESET);
+				printf("      %s%.*s%s%s%s", COLOR_LIGHTGREEN, indent_size, line_buf, COLOR_BOLD,
+					   line_buf + indent_size, COLOR_RESET);
 			}
 		}
 	}
