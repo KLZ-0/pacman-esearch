@@ -34,17 +34,16 @@ char *append_home_path(const char *relpath) {
 }
 
 void help() {
-	printf("\
-pacman-esearch (%s) - Replacement for both pacman -Ss and pacman -Si\n\n\
-esearch <regexp> [options]\n\
-    --instonly, -I\tFind only packages which are installed\n\
-    --notinst, -N\tFind only packages which are NOT installed\n\
-    --nocolor, -n\tDon't use ANSI codes for colored output\n\
-    --exact-match, -e\tShow only exact match\n\
-    --nowarndb, -w\tDo not complain about database age\n\
-    --version, -v\tShow version\n\
-    --help, -h\t\tShow this message\n\n\
-", VERSION);
+	printf("pacman-esearch (%s) - Replacement for both pacman -Ss and pacman -Si\n\n"
+		"Usage: esearch <regexp> [options]\n"
+  		"Options:\n"
+		"    --instonly, -I\tFind only packages which are installed\n"
+		"    --notinst, -N\tFind only packages which are NOT installed\n"
+		"    --nocolor, -n\tDon't use ANSI codes for colored output\n"
+		"    --exact-match, -e\tShow only exact match\n"
+		"    --nowarndb, -w\tDo not complain about database age\n"
+		"    --version, -v\tShow version\n"
+		"    --help, -h\t\tShow this message\n\n", VERSION);
 }
 
 int parse_args(int argc, char **argv, uint8_t *arg_opts, char *pattern) {

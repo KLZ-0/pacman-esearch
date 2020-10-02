@@ -6,7 +6,7 @@
  */
 
 // version
-#define VERSION "4.3.6"
+#define VERSION "4.3.7"
 
 // esearch database
 // must match "index_location" in eupdatedb
