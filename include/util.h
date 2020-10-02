@@ -5,6 +5,6 @@
 
 char* getHomePath(const char* relpath);
 void help();
-void dbAgeCheck(char* db_filename, uint8_t arg_opts);
+int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern);
 
 #endif //ESEARCH_UTIL_H
