@@ -47,14 +47,15 @@ int traverseDB(FILE *db, uint8_t arg_opts, const regex_t *regexp) {
 	while (fgets(line_buf, LINE_BUFFER_SIZE, db) != NULL) {
 		// '-' signals a new package
 		if (line_buf[0] == '-') {
-			char *installed_banner = (line_buf[1] - '0') ? " [ installed ]" : "";
+			bool installed = line_buf[1] - '0';
 			char *pkg_name = strtok(line_buf+2, "\n");
-			if (regexec(regexp, pkg_name, 0, NULL, 0) == EXIT_SUCCESS) {
-				printf("%s*%s  %s%s%s%s\n", COLOR_BOLDGREEN, COLOR_BOLD, pkg_name, COLOR_IMPORTANT, installed_banner, COLOR_RESET);
-				pkg_print = true;
-			}
-			else {
+			pkg_print = regexec(regexp, pkg_name, 0, NULL, 0) == EXIT_SUCCESS;
+			if ((isFlag(arg_opts, FLAG_INST) && !installed) || (isFlag(arg_opts, FLAG_NOINST) && installed)) {
 				pkg_print = false;
+			}
+
+			if (pkg_print) {
+				printf("%s*%s  %s%s%s%s\n", COLOR_BOLDGREEN, COLOR_BOLD, pkg_name, COLOR_IMPORTANT, (installed) ? " [ installed ]" : "", COLOR_RESET);
 			}
 		} else if (pkg_print) {
 			// test if last line
@@ -70,11 +71,11 @@ int traverseDB(FILE *db, uint8_t arg_opts, const regex_t *regexp) {
 }
 
 int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
-	char *option;
+	char *tmp_pattern = NULL;
 
 	if (argc < 2) { help(); return EXIT_SUCCESS; }
 	for (int opti = 1; opti < argc ; opti++) {
-		option = argv[opti];
+		char *option = argv[opti];
 		if (option[0] == '-' && option[1] == '-') {
 			if (strcmp(option, "--instonly") == 0) setFlag(*arg_opts, FLAG_INST);
 			else if (strcmp(option, "--notinst") == 0) setFlag(*arg_opts, FLAG_NOINST);
@@ -104,13 +105,26 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 			}
 		}
 		else {
-			strncpy(pattern, argv[opti], PATTERN_LEN_MAX-1);
+			tmp_pattern = argv[opti];
 		}
 	}
 
-	if (pattern[0] == '\0') {
+	// NOTE: This doesn't trigger when the pattern is "" -> will print every package (this behavior is intended)
+	if (tmp_pattern == NULL) {
 		error("Pattern not found, check arguments..\n");
 		return EXIT_FAILURE;
+	}
+
+	if (isFlag(*arg_opts, FLAG_EXACT)) {
+		char *lastchar = memccpy(pattern+1, tmp_pattern, '\0', PATTERN_LEN_MAX-3);
+		if (lastchar == NULL) {
+			error("Pattern too long, set PATTERN_LEN_MAX to an appropriate value and recompile esearch");
+			return EXIT_FAILURE;
+		}
+		pattern[0] = '^';
+		*(lastchar-1) = '$';
+	} else {
+		memccpy(pattern, tmp_pattern, '\0', PATTERN_LEN_MAX-1);
 	}
 
 	return INT_MAX;
