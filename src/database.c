@@ -1,5 +1,5 @@
 #include "database.h"
-#include "esearch.h"
+#include "def.h"
 #include "error.h"
 
 #include <sys/stat.h>

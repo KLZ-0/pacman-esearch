@@ -8,4 +8,4 @@ set(CMAKE_C_FLAGS_RELEASE "-O2")
 
 include_directories(./include/)
 
-add_executable(esearch src/esearch.c src/error.c src/util.c src/database.c)
+add_executable(esearch src/main.c src/error.c src/util.c src/database.c)

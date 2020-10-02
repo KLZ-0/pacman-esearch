@@ -1,5 +1,5 @@
 #include "util.h"
-#include "esearch.h"
+#include "def.h"
 #include "error.h"
 
 #include <stdio.h>
@@ -103,7 +103,7 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 	if (isFlag(*arg_opts, FLAG_EXACT)) {
 		char *lastchar = memccpy(pattern+1, tmp_pattern, '\0', PATTERN_LEN_MAX-3);
 		if (lastchar == NULL) {
-			error("Pattern too long, set PATTERN_LEN_MAX to an appropriate value and recompile esearch");
+			error("Pattern too long, set PATTERN_LEN_MAX in ('include/def.h') to an appropriate value and recompile esearch");
 			return EXIT_FAILURE;
 		}
 		pattern[0] = '^';

@@ -1,14 +1,25 @@
-#ifndef ESEARCH_ESEARCH_H
-#define ESEARCH_ESEARCH_H
+#ifndef ESEARCH_DEF_H
+#define ESEARCH_DEF_H
 
 /*
  * config
  */
 
-#define VERSION "4.3.2"
+// version
+#define VERSION "4.3.3"
+
+// esearch database
+// must match "index_location" in eupdatedb
 #define DATABASE "/.cache/esearch/index"
+
+// max length of the regexp search pattern
 #define PATTERN_LEN_MAX 256
+
+// size of line buffer used when traversing the database
 #define LINE_BUFFER_SIZE 2048
+
+// warn the user if the database age exceeds this value
+// the value is in seconds
 #define DB_WARN_AGE 604800 // 7 days
 
 /*
@@ -32,4 +43,4 @@
 #define setFlag(flags, flag) (flags |= (1u << (flag)))
 #define isFlag(flags, flag) ((flags >> (flag)) & 1u)
 
-#endif //ESEARCH_ESEARCH_H
+#endif //ESEARCH_DEF_H
