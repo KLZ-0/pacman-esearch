@@ -1,324 +1,73 @@
-#include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+#include <limits.h>
 #include <regex.h>
-#include <time.h>
-#include <sys/stat.h>
 
-#ifndef VERSION
-#define VERSION "2.1.8"
-#endif
+#include "error.h"
+#include "def.h"
+#include "util.h"
+#include "database.h"
 
-#define DB ".cache/esearch-database"
+// colors
+char *COLOR_BOLD = "\033[0;1m";
+char *COLOR_BOLDRED = "\033[1;31m";
+char *COLOR_BOLDGREEN = "\033[1;32m";
+char *COLOR_LIGHTGREEN = "\033[0;32m";
+char *COLOR_INFO = "\033[1;33m";
+char *COLOR_WARN = "\033[1;35m";
+char *COLOR_ERROR = "\033[1;31m";
+char *COLOR_RESET = "\033[0;0m";
 
-char *COLOR_IMPORTANT = "\033[1;31m";
-char *COLOR_HEADER = "\033[0;1m";
-char *COLOR_GREEN_ASTERIX = "\033[38;5;46m";
-char *COLOR_NORMAL = "\033[0m";
-char *COLOR_LIGHT = "\033[38;5;34m";
+int esearch(int argc, char *argv[], char **db_filename, FILE **db, regex_t *regexp) {
+	// argument parsing
+	uint8_t arg_opts = 0;
+	char pattern[PATTERN_LEN_MAX] = {0};
+	if (parse_args(argc, argv, &arg_opts, pattern) != INT_MAX) {
+		return EXIT_FAILURE;
+	}
 
-char db_main[256];
-char db_installed[256];
-char *installedBuffer = 0;
+	// query database path
+	*db_filename = append_home_path(DATABASE);
+	if (*db_filename == NULL) {
+		error("Home directory not found, is your $HOME set?\n");
+		return EXIT_FAILURE;
+	}
 
-int flags = 0;
+	// open database
+	*db = fopen(*db_filename, "r");
+	if (*db == NULL) {
+		error("Failed to open database, did you run eupdatedb?\n");
+		return EXIT_FAILURE;
+	}
 
-// TODO: Make option to print only found package names/only first
+	// compile regex
+	if (regcomp(regexp, pattern, REG_ICASE) != EXIT_SUCCESS) {
+		error("Could not compile regex\n");
+		return EXIT_FAILURE;
+	}
 
-typedef enum {
-    LINE_HEADER,
-    LINE_NORMAL,
-    LINE_SOFTBROKEN,
-    LINE_BLOCKTERM
-} LineType;
+	// traverse database
+	printf("[ Results for search key : %s%s%s ]\n\n", COLOR_BOLD, pattern, COLOR_RESET);
+	int ret = db_traverse(*db, arg_opts, regexp);
+	db_age_check(*db_filename, arg_opts);
 
-typedef enum {
-    FLAG_INST,
-    FLAG_NOINST,
-    FLAG_NOCOLOR,
-    FLAG_NOWARNDB,
-    FLAG_EXACT
-} SearchFlag;
-
-#define setSearchFlag(_f) (flags |= (1 << (_f)))
-#define isSearchFlag(_f) ((flags >> (_f)) & 1)
-
-void help() {
-    printf("\
-pacman-esearch (%s) - Replacement for both pacman -Ss and pacman -Si\n\n\
-esearch <pkgname> [options]\n\
-    --instonly, -I\tFind only packages which are installed\n\
-    --notinst, -N\tFind only packages which are NOT installed\n\
-    --nocolor, -n\tDon't use ANSI codes for colored output\n\
-    --exact-match, -e\tShow only exact match\n\
-    --nowarndb, -w\tDo not complain about database age\n\
-    --version, -v\tShow version\n\
-    --help, -h\t\tShow this message\n\n\
-", VERSION);
-}
-
-int startsWith(char *str, char* substr) {
-    for(size_t i = 0; i < strlen(substr); i++) {
-        if (str[i] != substr[i]) {
-            return 0;
-        }
-    }
-    return 1;
-}
-
-size_t lastIndexOf(char *str, char search) {
-    for(int i = strlen(str)-1; i > 0; i--) {
-        if (str[i] == search) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-void formatLine(char* line, LineType type) {
-
-    char *tempToken;
-    switch (type) {
-        case LINE_HEADER:
-            printf("%s*  %s%s\n", COLOR_GREEN_ASTERIX, COLOR_HEADER, line);
-            break;
-
-        case LINE_NORMAL:
-        tempToken = strtok(line, ":");
-            printf("%s      %s%s:%s%s", COLOR_LIGHT, tempToken, COLOR_HEADER, strtok(NULL, ""), COLOR_NORMAL);
-            break;
-
-        case LINE_SOFTBROKEN:
-            printf("      %s%s%s", COLOR_HEADER, line, COLOR_NORMAL);
-            break;
-
-        case LINE_BLOCKTERM:
-            printf(line);
-            break;
-
-        default:
-            break;
-    }
-
-}
-
-void getWordUntilDelimiter(char *newchar, char *point, char delimiter) {
-
-    // detection of the first space to get a whole word
-    char *nextWordPos = 0;
-    for(size_t i = 1; i < 30; i++) {
-        if (point[i] == ' ') {            
-            nextWordPos = &point[i]+1;
-            break;
-        }
-    }  
-
-    for(size_t i = 0; i < 30; i++) {
-        newchar[i] = *(nextWordPos+i);
-        if (*(nextWordPos+i+1) == delimiter) {
-            break;
-        }
-    }
-
-}
-
-int searchFile(const regex_t *ex, char* installed) {
-
-    FILE *fstream = fopen(db_main, "r");
-    char line[4096];
-
-    if(fstream == NULL) {
-        fprintf(stderr, "Error opening file");
-        return 1;
-    }
-
-    char repoline[4096];
-    int inblock = 0;
-    char header[4000];
-    char *installedIndex;
-    char pkgVer[30];
-    while (fgets(line, 4096, fstream)) {
-        if (inblock) {
-            // Flag "inblock" set -> just print the line as is
-            if (strlen(line) == 1) {
-                // Final line -> print "Repository" line and end block
-                formatLine(repoline, LINE_NORMAL);
-                formatLine(line, LINE_BLOCKTERM);
-                inblock = 0;
-                continue;
-            }
-
-            if (line[0] != ' ') {
-                // Normal line
-                formatLine(line, LINE_NORMAL);
-            }
-            else {
-                // Partly broken line (e.g. "Depends On" or "Optional Deps")
-                formatLine(line, LINE_SOFTBROKEN);
-            }
-
-            continue;
-        }
-
-        if (line[0] == 'N') {
-            // Search "Name" line for matches and set inblock for block start
-            strcpy(header, &line[lastIndexOf(line, ' ')+1]);
-            strtok(header, "\n");
-
-            if (!regexec(ex, header, 0, NULL, 0)) {
-                installedIndex = strstr(installed, header);
-                if (installedIndex) {
-                    if (isSearchFlag(FLAG_NOINST)) {
-                        continue;
-                    }
-                    getWordUntilDelimiter(pkgVer, installedIndex, '\n');
-                    sprintf(line, "%s %s[ installed ]\n      %sCurrent Version : %s%s", header, COLOR_IMPORTANT, COLOR_LIGHT, COLOR_HEADER, pkgVer);
-                }
-                else {
-                    if (isSearchFlag(FLAG_INST)) {
-                        continue;
-                    }
-                    sprintf(line, "%s", header);
-                }
-
-                inblock = 1;
-                formatLine(line, LINE_HEADER);
-                continue;
-            }
-        }
-
-        if (startsWith(line, "Repo")) {
-            // Store "Repository" line in a buffer to be printed at the end of a block
-            strncpy(repoline, line, 4096);
-        }
-
-    }
-
-    fclose(fstream);
-    return 0;
-
-}
-
-void dbAgeCheck(char* db) {
-    struct stat buf;
-    stat(db, &buf);
-    time_t dbcreation = buf.st_ctime;
-    time_t now;
-    time(&now);
-
-    time_t dbage = now-dbcreation;
-    if (dbage > 604800) { // 7 days
-        printf("\033[93;1m *** \033[0mYou should run eupdatedb, the last update was %lu days ago - on %s", dbage/86400, ctime(&dbcreation));
-    }
+	return ret;
 }
 
 int main(int argc, char *argv[]) {
+	int ret = EXIT_SUCCESS;
+	char *db_filename = NULL;
+	FILE *db = NULL;
+	regex_t regexp = {0};
 
-    char *option;
-    char pattern[256];
-    regex_t ex;
+	ret = esearch(argc, argv, &db_filename, &db, &regexp);
 
-    if (argc < 2) { help(); return 0; }
-    for (int i = 1; i < argc ; i++) {
-        option = argv[i];
-        if (option[0] == '-' && option[1] == '-') {
-            if (strcmp(option, "--instonly") == 0) setSearchFlag(FLAG_INST);
-            else if (strcmp(option, "--notinst") == 0) setSearchFlag(FLAG_NOINST);
-            else if (strcmp(option, "--nocolor") == 0) setSearchFlag(FLAG_NOCOLOR);
-            else if (strcmp(option, "--nowarndb") == 0) setSearchFlag(FLAG_NOWARNDB);
-            else if (strcmp(option, "--exact-match") == 0) setSearchFlag(FLAG_EXACT);
-            else if (strcmp(option, "--version") == 0) { printf("%s\n", VERSION); return 0; }
-            else if (strcmp(option, "--help") == 0) { help(); return 0; }
-            else { printf("unknown option! see --help for all options\n"); return 1; }
-        }
-        else if (option[0] == '-') {
-            for(size_t i = 1; i < strlen(option); i++) {
-                switch (option[i])
-                {
-                    case 'I': setSearchFlag(FLAG_INST); break;
-                    case 'N': setSearchFlag(FLAG_NOINST); break;
-                    case 'n': setSearchFlag(FLAG_NOCOLOR); break;
-                    case 'w': setSearchFlag(FLAG_NOWARNDB); break;
-                    case 'e': setSearchFlag(FLAG_EXACT); break;
-                    case 'v': printf("%s\n", VERSION); return 0;
-                    case 'h': help(); return 0;
-                    case '\0': break;
+	// cleanup
+	free(db_filename);
+	if (db != NULL) { fclose(db); }
+	regfree(&regexp);
 
-                    default:
-                        printf("unknown option! see --help for all options\n");
-                        return 1;
-                }
-            }
-        }
-        else {
-            strcpy(pattern, argv[i]);
-        }
-    }
-
-    ////// Instantly applyable search flags
-
-    if (isSearchFlag(FLAG_NOCOLOR)) {
-        COLOR_GREEN_ASTERIX = COLOR_HEADER = COLOR_IMPORTANT = COLOR_LIGHT = COLOR_NORMAL = "";
-    }
-
-    if (isSearchFlag(FLAG_EXACT)) {
-        char tmp[250];
-        strcpy(tmp, pattern);
-        sprintf(pattern, "^%s$", tmp);
-    }
-
-
-    ////// Additional checks
-
-    if (pattern == NULL) {
-        fprintf(stderr, "Pattern not found, check arguments..\n");
-        return 1;
-    }
-
-    if (regcomp(&ex, pattern, REG_ICASE)) {
-        fprintf(stderr, "Could not compile regex\n");
-        return 1;
-    }
-
-    ////// Load installed
-
-    sprintf(db_main, "%s/%s", getenv("HOME"), DB);
-    sprintf(db_installed, "%s/%s-installed", getenv("HOME"), DB);
-    // TODO: Add option to disable database time check
-
-    long length;
-    FILE *installedFile = fopen (db_installed, "r");
-    if(installedFile == NULL) {
-        fprintf(stderr, "Error opening file");
-        return 1;
-    }
-
-    if (installedFile) {
-        fseek (installedFile, 0, SEEK_END);
-        length = ftell (installedFile);
-        fseek (installedFile, 0, SEEK_SET);
-        installedBuffer = malloc (length);
-        if (installedBuffer) {
-            fread (installedBuffer, 1, length, installedFile);
-        }
-        fclose (installedFile);
-    }
-
-    ////// Actual search
-
-    printf("\n");
-    if (searchFile(&ex, installedBuffer)) {
-        free(installedBuffer);
-        return -127;
-    }
-    free(installedBuffer);
-    regfree(&ex);
-
-    ////// Check database age
-    if (!isSearchFlag(FLAG_NOWARNDB)) {
-        dbAgeCheck(db_main);
-    }
-
-    return 0;
-
+	return ret;
 }

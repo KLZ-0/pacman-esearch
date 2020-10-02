@@ -1,8 +1,7 @@
-language: cpp
+language: c
 
 sudo: required
 
 script:
-  - cmake -B ./build ./ 
   - make
   - sudo make install

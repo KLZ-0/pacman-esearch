@@ -1,22 +1,18 @@
 # pacman-esearch
 
 [![Build Status](https://travis-ci.org/KLZ-0/pacman-esearch.svg?branch=master)](https://travis-ci.org/KLZ-0/pacman-esearch)
-[![AUR Status](https://img.shields.io/badge/AUR-v2.1.7-blue.svg)](https://aur.archlinux.org/packages/esearch/)
+[![AUR Status](https://img.shields.io/badge/AUR-esearch-blue.svg)](https://aur.archlinux.org/packages/esearch/)
 
-This is the rewritten version of pacman-esearch in plain C
+Print verbose information about packages matching a regular expression
 
-The original C++ version can be found in the `v1` branch of this repository
+Inspired by [https://github.com/fuzzyray/esearch](https://github.com/fuzzyray/esearch)
 
 # Features
 
-- Output similar to gentoo esearch
-- Combination of pacman search (lists all packages matching a pattern) and pacman info (prints verbose information about a package)
-- Offline search
-- Options and features similar to those of gentoo esearch, including:
-  - **regex support**
-  - filter **Installed or NOT installed** packages
-  - show detailed information about **multiple** packages at the same time (unlike pacman -Si)
-  - support for **colored output using ANSI codes** by default (can be disabled with `-n`)
+- Output and options similar to Gentoo esearch
+- Search index
+- Support for regular expressions and filters (list of all options can be obtained by `-h`)
+- Print information about **all matched** packages at the same time (unlike `pacman -Si`)
 
 # Installation
 
@@ -26,24 +22,23 @@ The original C++ version can be found in the `v1` branch of this repository
 
 ## From source
 
-Clone this repository and cd into it:
+Clone this repository:
 
 `git clone https://github.com/KLZ-0/pacman-esearch.git && cd pacman-esearch`
 
+Compile the executable:
 
-Execute cmake and compile from source:
+`make`
 
-`cmake -B ./build ./ && make -C build/`
+Install to `/usr/bin/`:
 
-Install to `/usr/local/bin/`:
+`sudo make install`
 
-`sudo make install -C build/`
-
-Create the search index:
+Create the search index after installation:
 
 `eupdatedb`
 
-NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eupdatedb as regular user (the one who will be using esearch) -- For example the search index for user `john` will be stored in `/home/john/.cache/`
+NOTE: the search index is stored in `$HOME/.cache/esearch/` on per-user basis so run eupdatedb as regular user (the one who will be using esearch) -- For example the search index for user `john` will be stored in `/home/john/.cache/esearch/`
 
 # Usage
 
@@ -53,6 +48,8 @@ NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eup
 
 
 **`esearch [options] <pattern>`**
+
+`--verbose, -v` Print even more information about packages
 
 `--instonly, -I` Find only packages which are installed
 
@@ -68,9 +65,7 @@ NOTE: the search index is stored in `$HOME/.cache/` on per-user basis so run eup
 
 `--help, -h` Show help message
 
-# Troubleshooting
-
-`Error: Failed to open database!` - run `eupdatedb`.
-
 # Requirements
-- **GCC**
+- GCC
+- CMake
+- Python 3

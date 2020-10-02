@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+from subprocess import check_output
+
+# CONFIG
+##########################
+
+version = "2.2"
+padding = 18
+installed_headline = "Installed version"
+color_start = "\033[1;33m"
+color_reset = "\033[0m"
+unimportant_keys = [
+    "Architecture",
+    "Groups",
+    "Provides",
+    "Depends On",
+    "Optional Deps",
+    "Conflicts With",
+    "Replaces",
+    "Packager",
+    "Build Date",
+    "Validated By",
+    "Repository"
+]
+
+# ARGUMENT PARSING
+##########################
+
+if "-v" in sys.argv or "--version" in sys.argv:
+    print(version)
+    sys.exit()
+
+if "-h" in sys.argv or "--help" in sys.argv:
+    print(
+        "pacman-eupdatedb ({version}) - Update the search index for pacman-esearch\n\n"
+        "Usage: eupdatedb [options]\n"
+        "Options:\n"
+        "--quiet, -q         Finish quietly\n"
+        "--nocolor, -n       Don't use ANSI codes for colored output\n"
+        "--version, -v       Show version\n"
+        "--help, -h          Show this message\n".format(version=version)
+    )
+    sys.exit()
+
+if "-n" in sys.argv or "--nocolor" in sys.argv:
+    color_start = ""
+    color_reset = ""
+
+##########################
+
+form_header = "\"{semicolon_pos}\"" # position of ":"
+form = "{key:{padding}} : {value}\n"
+form_alt = "{key:{padding}}   {value}\n"
+index_dir = "{home}/.cache/esearch".format(home=os.environ['HOME'])
+index_location = "{index_dir}/index".format(index_dir=index_dir)
+
+pkg_installed = check_output(["pacman", "-Qe"]).decode("utf-8") + check_output(["pacman", "-Qd"]).decode("utf-8")
+pkg_all = check_output(["pacman", "-Si"]).decode("utf-8").strip().split("\n\n")
+
+installed_dict = {}
+for pkg in pkg_installed.strip().split("\n"):
+    pkg = pkg.split(" ")
+    installed_dict[pkg[0]] = pkg[1]
+
+staticrepo = ""
+ver_installed = ""
+belongs_to = ""  # in multiline values (used for remembering which key they belong to)
+
+os.makedirs(index_dir, exist_ok=True)
+with open(index_location, "w") as f:
+    f.write(chr(padding + 1))
+
+    for package in pkg_all:
+        for line in package.split("\n"):
+            if line.startswith(" "):  # properties with only one part
+                key = ""
+                value = line.strip()
+                formatted_line = form_alt.format(key=key, value=value, padding=padding)
+            else:
+                key, value = [word.strip() for word in line.split(":", 1)]
+                belongs_to = key
+                formatted_line = form.format(key=key, value=value, padding=padding)
+
+            if key == "Repository":
+                staticrepo = formatted_line
+                continue
+
+            elif key == "Name":
+                if value == "":
+                    print(line)
+                    print(line.split(":")[0])
+                ver_installed = installed_dict.get(value, "[ Not Installed ]")
+
+                # PKG name
+                f.write("-")
+                f.write("0" if ver_installed == "[ Not Installed ]" else "1")
+                f.write(value)
+                f.write("\n")
+
+            elif key == "Version":
+                f.write(formatted_line)
+                f.write(form.format(key=installed_headline, value=ver_installed, padding=padding))
+
+            else:
+                if key in unimportant_keys or belongs_to in unimportant_keys:
+                    f.write("+")
+                f.write(formatted_line)
+
+        # PKG repo to the end
+        if "Repository" not in unimportant_keys:
+            f.write(staticrepo)
+        f.write("\n")
+
+if "-q" not in sys.argv and "--quiet" not in sys.argv:
+    print("{c_b} *** {c_r}\033[0m eupdatedb finished successfully "
+          "with {all} global and "
+          "{installed} installed packages".format(c_b=color_start, c_r=color_reset, all=len(pkg_all), installed=len(installed_dict)))
+    print("Size of search index: {size:.2f} MiB".format(size=os.path.getsize(index_location)/pow(2, 20)))
