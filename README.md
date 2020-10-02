@@ -1,24 +1,18 @@
 # pacman-esearch
 
 [![Build Status](https://travis-ci.org/KLZ-0/pacman-esearch.svg?branch=master)](https://travis-ci.org/KLZ-0/pacman-esearch)
-[![AUR Status](https://img.shields.io/badge/AUR-v2.1.7-blue.svg)](https://aur.archlinux.org/packages/esearch/)
+[![AUR Status](https://img.shields.io/badge/AUR-esearch-blue.svg)](https://aur.archlinux.org/packages/esearch/)
 
-This is the rewritten version of pacman-esearch in plain C
-
-The original C++ version can be found in the `v1` branch of this repository
+Print verbose information about packages matching a regular expression
 
 Inspired by [https://github.com/fuzzyray/esearch](https://github.com/fuzzyray/esearch)
 
 # Features
 
-- Output similar to gentoo esearch
-- Combination of pacman search (lists all packages matching a pattern) and pacman info (prints verbose information about a package)
-- Offline search
-- Options and features similar to those of gentoo esearch, including:
-  - **regex support**
-  - filter **Installed or NOT installed** packages
-  - show detailed information about **multiple** packages at the same time (unlike pacman -Si)
-  - support for **colored output using ANSI codes** by default (can be disabled with `-n`)
+- Output and options similar to Gentoo esearch
+- Search index
+- Support for regular expressions and filters (list of all options can be obtained by `-h`)
+- Print information about **all matched** packages at the same time (unlike `pacman -Si`)
 
 # Installation
 
@@ -69,9 +63,7 @@ NOTE: the search index is stored in `$HOME/.cache/esearch/` on per-user basis so
 
 `--help, -h` Show help message
 
-# Troubleshooting
-
-`Error: Failed to open database!` - run `eupdatedb`.
-
 # Requirements
-- **GCC**
+- GCC
+- CMake
+- Python 3
