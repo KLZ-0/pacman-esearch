@@ -3,9 +3,18 @@
 
 #include "error.h"
 
+extern char *COLOR_INFO;
 extern char *COLOR_WARN;
 extern char *COLOR_ERROR;
 extern char *COLOR_RESET;
+
+void info(const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+
+	fprintf(stderr, "%sinfo:%s ", COLOR_INFO, COLOR_RESET);
+	vfprintf(stderr, fmt, args);
+}
 
 void warn(const char *fmt, ...) {
 	va_list args;

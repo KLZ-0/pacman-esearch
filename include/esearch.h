@@ -9,10 +9,14 @@
 #define INDEX "/.cache/esearch/index"
 #define PATTERN_LEN_MAX 256
 #define LINE_BUFFER_SIZE 2048
+#define DB_WARN_AGE 604800 // 7 days
 
 /*
  * defines
  */
+
+// seconds in a day
+#define SEC_DAY 86400
 
 // parser related stuff
 #define FLAG_INST 0u

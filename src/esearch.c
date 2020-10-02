@@ -15,6 +15,7 @@ char *COLOR_IMPORTANT = "\033[1;31m";
 char *COLOR_BOLD = "\033[0;1m";
 char *COLOR_BOLDGREEN = "\033[1;32m";
 char *COLOR_LIGHTGREEN = "\033[0;32m";
+char *COLOR_INFO = "\033[1;33m";
 char *COLOR_WARN = "\033[1;35m";
 char *COLOR_ERROR = "\033[1;31m";
 char *COLOR_RESET = "\033[0;0m";
@@ -126,7 +127,7 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 	}
 
 	if (isFlag(*arg_opts, FLAG_NOCOLOR)) {
-		COLOR_IMPORTANT = COLOR_BOLD = COLOR_BOLDGREEN = COLOR_LIGHTGREEN = COLOR_WARN = COLOR_ERROR = COLOR_RESET = "";
+		COLOR_IMPORTANT = COLOR_BOLD = COLOR_BOLDGREEN = COLOR_LIGHTGREEN = COLOR_INFO = COLOR_WARN = COLOR_ERROR = COLOR_RESET = "";
 	}
 
 	return INT_MAX;
@@ -163,6 +164,7 @@ int main(int argc, char *argv[]) {
 
 	printf("[ Results for search key : %s%s%s ]\n\n", COLOR_BOLD, pattern, COLOR_RESET);
 	ret = traverseDB(db, arg_opts, &regexp);
+	dbAgeCheck(db_filename, arg_opts);
 
 	cleanup:
 	free(db_filename);
