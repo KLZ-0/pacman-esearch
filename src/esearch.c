@@ -13,12 +13,12 @@
 
 // colors
 char *COLOR_IMPORTANT = "\033[1;31m";
-char *COLOR_HEADER = "\033[0;1m";
+char *COLOR_BOLD = "\033[0;1m";
 char *COLOR_BOLDGREEN = "\033[1;32m";
+char *COLOR_LIGHTGREEN = "\033[0;32m";
 char *COLOR_WARN = "\033[1;35m";
 char *COLOR_ERROR = "\033[1;31m";
 char *COLOR_RESET = "\033[0;0m";
-char *COLOR_LIGHT = "\033[0;32m";
 
 int getDBheader(FILE *db, uint8_t *indent_size) {
 	// return code buffer
@@ -35,20 +35,34 @@ int getDBheader(FILE *db, uint8_t *indent_size) {
 	return EXIT_SUCCESS;
 }
 
-int traverseDB(FILE *db, uint8_t arg_opts, regex_t *regexp) {
+int traverseDB(FILE *db, uint8_t arg_opts, const regex_t *regexp) {
 	uint8_t indent_size;
 	if (getDBheader(db, &indent_size) == EXIT_FAILURE) {
 		return EXIT_FAILURE;
 	}
 
 	char line_buf[LINE_BUFFER_SIZE];
-	bool installed = false;
+	bool pkg_print = false;
 
 	while (fgets(line_buf, LINE_BUFFER_SIZE, db) != NULL) {
 		// '-' signals a new package
 		if (line_buf[0] == '-') {
-			installed = line_buf[1] - '0';
-			printf("%s*%s %s%s", COLOR_BOLDGREEN, COLOR_HEADER, line_buf+2, COLOR_RESET);
+			char *installed_banner = (line_buf[1] - '0') ? " [ installed ]" : "";
+			char *pkg_name = strtok(line_buf+2, "\n");
+			if (regexec(regexp, pkg_name, 0, NULL, 0) == EXIT_SUCCESS) {
+				printf("%s*%s  %s%s%s%s\n", COLOR_BOLDGREEN, COLOR_BOLD, pkg_name, COLOR_IMPORTANT, installed_banner, COLOR_RESET);
+				pkg_print = true;
+			}
+			else {
+				pkg_print = false;
+			}
+		} else if (pkg_print) {
+			// test if last line
+			if (line_buf[0] == '\n') {
+				printf("\n");
+			} else {
+				printf("      %s%.*s%s%s%s", COLOR_LIGHTGREEN, indent_size, line_buf, COLOR_BOLD, line_buf + indent_size, COLOR_RESET);
+			}
 		}
 	}
 
@@ -131,6 +145,7 @@ int main(int argc, char *argv[]) {
 		goto cleanup;
 	}
 
+	printf("[ Results for search key : %s%s%s ]\n\n", COLOR_BOLD, pattern, COLOR_RESET);
 	ret = traverseDB(db, arg_opts, &regexp);
 
 	cleanup:

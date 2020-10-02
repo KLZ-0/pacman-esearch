@@ -7,6 +7,8 @@ This is the rewritten version of pacman-esearch in plain C
 
 The original C++ version can be found in the `v1` branch of this repository
 
+Inspired by [https://github.com/fuzzyray/esearch](https://github.com/fuzzyray/esearch)
+
 # Features
 
 - Output similar to gentoo esearch
