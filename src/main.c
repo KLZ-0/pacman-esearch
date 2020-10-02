@@ -26,13 +26,13 @@ int esearch(int argc, char *argv[], char **db_filename, FILE **db, regex_t *rege
 	// argument parsing
 	uint8_t arg_opts = 0;
 	char pattern[PATTERN_LEN_MAX] = {0};
-	ret = parseArgs(argc, argv, &arg_opts, pattern);
+	ret = parse_args(argc, argv, &arg_opts, pattern);
 	if (ret != INT_MAX) {
 		return EXIT_FAILURE;
 	}
 
 	// query database path
-	*db_filename = getHomePath(DATABASE);
+	*db_filename = append_home_path(DATABASE);
 	if (*db_filename == NULL) {
 		error("Home directory not found, is your $HOME set?\n");
 		return EXIT_FAILURE;
@@ -54,8 +54,8 @@ int esearch(int argc, char *argv[], char **db_filename, FILE **db, regex_t *rege
 
 	// traverse database
 	printf("[ Results for search key : %s%s%s ]\n\n", COLOR_BOLD, pattern, COLOR_RESET);
-	ret = traverseDB(*db, arg_opts, regexp);
-	dbAgeCheck(*db_filename, arg_opts);
+	ret = db_traverse(*db, arg_opts, regexp);
+	db_age_check(*db_filename, arg_opts);
 
 	return ret;
 }

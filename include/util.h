@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-char *getHomePath(const char *relpath);
+char *append_home_path(const char *relpath);
 void help();
-int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern);
+int parse_args(int argc, char **argv, uint8_t *arg_opts, char *pattern);
 
 #endif //ESEARCH_UTIL_H

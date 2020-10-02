@@ -6,7 +6,7 @@
  */
 
 // version
-#define VERSION "4.3.4"
+#define VERSION "4.3.5"
 
 // esearch database
 // must match "index_location" in eupdatedb
@@ -40,7 +40,7 @@
  * macros
  */
 
-#define setFlag(flags, flag) (flags |= (1u << (flag)))
-#define isFlag(flags, flag) ((flags >> (flag)) & 1u)
+#define set_flag(flags, flag) (flags |= (1u << (flag)))
+#define is_flag(flags, flag) ((flags >> (flag)) & 1u)
 
 #endif //ESEARCH_DEF_H

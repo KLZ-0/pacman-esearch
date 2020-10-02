@@ -9,8 +9,8 @@
 #include "error.h"
 #include "colors.h"
 
-void dbAgeCheck(char *db_filename, uint8_t arg_opts) {
-	if (isFlag(arg_opts, FLAG_NOWARNDB)) {
+void db_age_check(char *db_filename, uint8_t arg_opts) {
+	if (is_flag(arg_opts, FLAG_NOWARNDB)) {
 		return;
 	}
 
@@ -27,7 +27,7 @@ void dbAgeCheck(char *db_filename, uint8_t arg_opts) {
 	}
 }
 
-int getDBheader(FILE *db, uint8_t *indent_size) {
+int db_get_header(FILE *db, uint8_t *indent_size) {
 	// return code buffer
 	size_t ret;
 
@@ -41,9 +41,9 @@ int getDBheader(FILE *db, uint8_t *indent_size) {
 	return EXIT_SUCCESS;
 }
 
-int traverseDB(FILE *db, uint8_t arg_opts, const regex_t *regexp) {
+int db_traverse(FILE *db, uint8_t arg_opts, const regex_t *regexp) {
 	uint8_t indent_size;
-	if (getDBheader(db, &indent_size) == EXIT_FAILURE) {
+	if (db_get_header(db, &indent_size) == EXIT_FAILURE) {
 		return EXIT_FAILURE;
 	}
 
@@ -56,7 +56,7 @@ int traverseDB(FILE *db, uint8_t arg_opts, const regex_t *regexp) {
 			bool installed = line_buf[1] - '0';
 			char *pkg_name = strtok(line_buf + 2, "\n");
 			pkg_print = regexec(regexp, pkg_name, 0, NULL, 0) == EXIT_SUCCESS;
-			if ((isFlag(arg_opts, FLAG_INST) && !installed) || (isFlag(arg_opts, FLAG_NOINST) && installed)) {
+			if ((is_flag(arg_opts, FLAG_INST) && !installed) || (is_flag(arg_opts, FLAG_NOINST) && installed)) {
 				pkg_print = false;
 			}
 

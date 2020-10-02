@@ -15,7 +15,7 @@
  * @param relpath relative path "~/{relpath}"
  * @return Allocated char* with the full path or NULL on error, it needs to be freed afterwards
  */
-char *getHomePath(const char *relpath) {
+char *append_home_path(const char *relpath) {
 	struct passwd *pw = getpwuid(getuid());
 	if (pw == NULL)
 		return NULL;
@@ -47,7 +47,7 @@ esearch <regexp> [options]\n\
 ", VERSION);
 }
 
-int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
+int parse_args(int argc, char **argv, uint8_t *arg_opts, char *pattern) {
 	char *tmp_pattern = NULL;
 
 	if (argc < 2) {
@@ -57,11 +57,11 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 	for (int opti = 1; opti < argc; opti++) {
 		char *option = argv[opti];
 		if (option[0] == '-' && option[1] == '-') {
-			if (strcmp(option, "--instonly") == 0) setFlag(*arg_opts, FLAG_INST);
-			else if (strcmp(option, "--notinst") == 0) setFlag(*arg_opts, FLAG_NOINST);
-			else if (strcmp(option, "--nocolor") == 0) setFlag(*arg_opts, FLAG_NOCOLOR);
-			else if (strcmp(option, "--nowarndb") == 0) setFlag(*arg_opts, FLAG_NOWARNDB);
-			else if (strcmp(option, "--exact-match") == 0) setFlag(*arg_opts, FLAG_EXACT);
+			if (strcmp(option, "--instonly") == 0) set_flag(*arg_opts, FLAG_INST);
+			else if (strcmp(option, "--notinst") == 0) set_flag(*arg_opts, FLAG_NOINST);
+			else if (strcmp(option, "--nocolor") == 0) set_flag(*arg_opts, FLAG_NOCOLOR);
+			else if (strcmp(option, "--nowarndb") == 0) set_flag(*arg_opts, FLAG_NOWARNDB);
+			else if (strcmp(option, "--exact-match") == 0) set_flag(*arg_opts, FLAG_EXACT);
 			else if (strcmp(option, "--version") == 0) {
 				printf("%s\n", VERSION);
 				return EXIT_SUCCESS;
@@ -78,19 +78,19 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 			for (size_t optc = 1; optc < strlen(option); optc++) {
 				switch (option[optc]) {
 					case 'I':
-						setFlag(*arg_opts, FLAG_INST);
+						set_flag(*arg_opts, FLAG_INST);
 						break;
 					case 'N':
-						setFlag(*arg_opts, FLAG_NOINST);
+						set_flag(*arg_opts, FLAG_NOINST);
 						break;
 					case 'n':
-						setFlag(*arg_opts, FLAG_NOCOLOR);
+						set_flag(*arg_opts, FLAG_NOCOLOR);
 						break;
 					case 'w':
-						setFlag(*arg_opts, FLAG_NOWARNDB);
+						set_flag(*arg_opts, FLAG_NOWARNDB);
 						break;
 					case 'e':
-						setFlag(*arg_opts, FLAG_EXACT);
+						set_flag(*arg_opts, FLAG_EXACT);
 						break;
 					case 'v':
 						printf("%s\n", VERSION);
@@ -117,7 +117,7 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 		return EXIT_FAILURE;
 	}
 
-	if (isFlag(*arg_opts, FLAG_EXACT)) {
+	if (is_flag(*arg_opts, FLAG_EXACT)) {
 		char *lastchar = memccpy(pattern + 1, tmp_pattern, '\0', PATTERN_LEN_MAX - 3);
 		if (lastchar == NULL) {
 			error("Pattern too long, set PATTERN_LEN_MAX in ('include/def.h') to an appropriate value and recompile esearch");
@@ -129,7 +129,7 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 		memccpy(pattern, tmp_pattern, '\0', PATTERN_LEN_MAX - 1);
 	}
 
-	if (isFlag(*arg_opts, FLAG_NOCOLOR)) {
+	if (is_flag(*arg_opts, FLAG_NOCOLOR)) {
 		COLOR_BOLDRED = COLOR_BOLD = COLOR_BOLDGREEN = COLOR_LIGHTGREEN = COLOR_INFO = COLOR_WARN = COLOR_ERROR = COLOR_RESET = "";
 	}
 
