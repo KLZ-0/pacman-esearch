@@ -14,8 +14,8 @@ $(BUILD_DIR): CMakeLists.txt
 	cd $@ && cmake -D CMAKE_BUILD_TYPE=Release ..
 
 install: $(TARGET) eupdatedb
-	mkdir -p $(INSTALL_DIR)
-	cp $^ $(INSTALL_DIR)/
+	mkdir -p $(DESTDIR)$(INSTALL_DIR)
+	cp $^ $(DESTDIR)$(INSTALL_DIR)/
 
 clean:
 	rm -rf $(BUILD_DIR)
