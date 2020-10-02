@@ -42,7 +42,7 @@ with open(index_location, "w") as f:
             else:
                 line = [word.strip() for word in line.split(":")]
                 key = line[0]
-                value = line[1]
+                value = "".join(line[1:])
                 formatted_line = form.format(key=key, value=value, padding=padding)
 
             if key == "Repository":
