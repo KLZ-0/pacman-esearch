@@ -1,8 +1,3 @@
-#include "error.h"
-#include "def.h"
-#include "util.h"
-#include "database.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -10,9 +5,14 @@
 #include <limits.h>
 #include <regex.h>
 
+#include "error.h"
+#include "def.h"
+#include "util.h"
+#include "database.h"
+
 // colors
-char *COLOR_IMPORTANT = "\033[1;31m";
 char *COLOR_BOLD = "\033[0;1m";
+char *COLOR_BOLDRED = "\033[1;31m";
 char *COLOR_BOLDGREEN = "\033[1;32m";
 char *COLOR_LIGHTGREEN = "\033[0;32m";
 char *COLOR_INFO = "\033[1;33m";
@@ -20,7 +20,6 @@ char *COLOR_WARN = "\033[1;35m";
 char *COLOR_ERROR = "\033[1;31m";
 char *COLOR_RESET = "\033[0;0m";
 
-// TODO: Refactor
 // TODO: Reformat
 
 int esearch(int argc, char *argv[], char **db_filename, FILE **db, regex_t *regexp) {

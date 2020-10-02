@@ -2,15 +2,7 @@
 #include <stdarg.h>
 
 #include "error.h"
-
-extern char *COLOR_IMPORTANT;
-extern char *COLOR_BOLD;
-extern char *COLOR_BOLDGREEN;
-extern char *COLOR_LIGHTGREEN;
-extern char *COLOR_INFO;
-extern char *COLOR_WARN;
-extern char *COLOR_ERROR;
-extern char *COLOR_RESET;
+#include "colors.h"
 
 void info(const char *fmt, ...) {
 	va_list args;

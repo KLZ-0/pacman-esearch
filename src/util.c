@@ -1,7 +1,3 @@
-#include "util.h"
-#include "def.h"
-#include "error.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,14 +5,10 @@
 #include <pwd.h>
 #include <limits.h>
 
-extern char *COLOR_IMPORTANT;
-extern char *COLOR_BOLD;
-extern char *COLOR_BOLDGREEN;
-extern char *COLOR_LIGHTGREEN;
-extern char *COLOR_INFO;
-extern char *COLOR_WARN;
-extern char *COLOR_ERROR;
-extern char *COLOR_RESET;
+#include "util.h"
+#include "def.h"
+#include "error.h"
+#include "colors.h"
 
 /**
  * @brief Appends the given relpath to the home directory path
@@ -113,7 +105,7 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 	}
 
 	if (isFlag(*arg_opts, FLAG_NOCOLOR)) {
-		COLOR_IMPORTANT = COLOR_BOLD = COLOR_BOLDGREEN = COLOR_LIGHTGREEN = COLOR_INFO = COLOR_WARN = COLOR_ERROR = COLOR_RESET = "";
+		COLOR_BOLDRED = COLOR_BOLD = COLOR_BOLDGREEN = COLOR_LIGHTGREEN = COLOR_INFO = COLOR_WARN = COLOR_ERROR = COLOR_RESET = "";
 	}
 
 	return INT_MAX;

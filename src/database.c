@@ -1,21 +1,13 @@
-#include "database.h"
-#include "def.h"
-#include "error.h"
-
 #include <sys/stat.h>
 #include <time.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 
-extern char *COLOR_IMPORTANT;
-extern char *COLOR_BOLD;
-extern char *COLOR_BOLDGREEN;
-extern char *COLOR_LIGHTGREEN;
-extern char *COLOR_INFO;
-extern char *COLOR_WARN;
-extern char *COLOR_ERROR;
-extern char *COLOR_RESET;
+#include "database.h"
+#include "def.h"
+#include "error.h"
+#include "colors.h"
 
 void dbAgeCheck(char* db_filename, uint8_t arg_opts) {
 	if (isFlag(arg_opts, FLAG_NOWARNDB)) {
@@ -69,7 +61,7 @@ int traverseDB(FILE *db, uint8_t arg_opts, const regex_t *regexp) {
 			}
 
 			if (pkg_print) {
-				printf("%s*%s  %s%s%s%s\n", COLOR_BOLDGREEN, COLOR_BOLD, pkg_name, COLOR_IMPORTANT, (installed) ? " [ installed ]" : "", COLOR_RESET);
+				printf("%s*%s  %s%s%s%s\n", COLOR_BOLDGREEN, COLOR_BOLD, pkg_name, COLOR_BOLDRED, (installed) ? " [ installed ]" : "", COLOR_RESET);
 			}
 		} else if (pkg_print) {
 			// test if last line
