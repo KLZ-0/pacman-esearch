@@ -8,7 +8,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <limits.h>
-#include <sys/types.h>
 #include <regex.h>
 
 // colors
@@ -27,7 +26,6 @@ int getDBheader(FILE *db, uint8_t *indent_size) {
 	// read db header indicating the indent character (':') posistion
 	ret = fread(indent_size, sizeof(uint8_t), 1, db);
 	if (ret != 1) {
-		// TODO: Handle in error.h
 		error("Failed to read from database, did you run eupdatedb?\n");
 		return EXIT_FAILURE;
 	}
@@ -125,6 +123,10 @@ int parseArgs(int argc, char *argv[], uint8_t *arg_opts, char *pattern) {
 		*(lastchar-1) = '$';
 	} else {
 		memccpy(pattern, tmp_pattern, '\0', PATTERN_LEN_MAX-1);
+	}
+
+	if (isFlag(*arg_opts, FLAG_NOCOLOR)) {
+		COLOR_IMPORTANT = COLOR_BOLD = COLOR_BOLDGREEN = COLOR_LIGHTGREEN = COLOR_WARN = COLOR_ERROR = COLOR_RESET = "";
 	}
 
 	return INT_MAX;
