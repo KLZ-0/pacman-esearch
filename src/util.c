@@ -36,13 +36,14 @@ char *append_home_path(const char *relpath) {
 void help() {
 	printf("pacman-esearch (%s) - Replacement for both pacman -Ss and pacman -Si\n\n"
 		"Usage: esearch <regexp> [options]\n"
-  		"Options:\n"
+		"Options:\n"
+		"    --verbose, -v\tPrint even more information about packages\n"
 		"    --instonly, -I\tFind only packages which are installed\n"
 		"    --notinst, -N\tFind only packages which are NOT installed\n"
 		"    --nocolor, -n\tDon't use ANSI codes for colored output\n"
 		"    --exact-match, -e\tShow only exact match\n"
 		"    --nowarndb, -w\tDo not complain about database age\n"
-		"    --version, -v\tShow version\n"
+		"    --version, -V\tShow version\n"
 		"    --help, -h\t\tShow this message\n\n", VERSION);
 }
 
@@ -56,7 +57,8 @@ int parse_args(int argc, char **argv, uint8_t *arg_opts, char *pattern) {
 	for (int opti = 1; opti < argc; opti++) {
 		char *option = argv[opti];
 		if (option[0] == '-' && option[1] == '-') {
-			if (strcmp(option, "--instonly") == 0) set_flag(*arg_opts, FLAG_INST);
+			if (strcmp(option, "--verbose") == 0) set_flag(*arg_opts, FLAG_VERBOSE);
+			else if (strcmp(option, "--instonly") == 0) set_flag(*arg_opts, FLAG_INST);
 			else if (strcmp(option, "--notinst") == 0) set_flag(*arg_opts, FLAG_NOINST);
 			else if (strcmp(option, "--nocolor") == 0) set_flag(*arg_opts, FLAG_NOCOLOR);
 			else if (strcmp(option, "--nowarndb") == 0) set_flag(*arg_opts, FLAG_NOWARNDB);
@@ -76,6 +78,9 @@ int parse_args(int argc, char **argv, uint8_t *arg_opts, char *pattern) {
 		} else if (option[0] == '-') {
 			for (size_t optc = 1; optc < strlen(option); optc++) {
 				switch (option[optc]) {
+					case 'v':
+						set_flag(*arg_opts, FLAG_VERBOSE);
+						break;
 					case 'I':
 						set_flag(*arg_opts, FLAG_INST);
 						break;
@@ -91,7 +96,7 @@ int parse_args(int argc, char **argv, uint8_t *arg_opts, char *pattern) {
 					case 'e':
 						set_flag(*arg_opts, FLAG_EXACT);
 						break;
-					case 'v':
+					case 'V':
 						printf("%s\n", VERSION);
 						return EXIT_SUCCESS;
 					case 'h':

@@ -49,6 +49,8 @@ NOTE: the search index is stored in `$HOME/.cache/esearch/` on per-user basis so
 
 **`esearch [options] <pattern>`**
 
+`--verbose, -v` Print even more information about packages
+
 `--instonly, -I` Find only packages which are installed
 
 `--notinst, -N` Find only packages which are NOT installed

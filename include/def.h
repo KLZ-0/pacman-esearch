@@ -6,7 +6,7 @@
  */
 
 // version
-#define VERSION "4.3.7"
+#define VERSION "4.3.8"
 
 // esearch database
 // must match "index_location" in eupdatedb
@@ -35,6 +35,7 @@
 #define FLAG_NOCOLOR 2u
 #define FLAG_NOWARNDB 3u
 #define FLAG_EXACT 4u
+#define FLAG_VERBOSE 5u
 
 /*
  * macros

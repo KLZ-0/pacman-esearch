@@ -7,11 +7,24 @@ from subprocess import check_output
 # CONFIG
 ##########################
 
-version = "2.1"
+version = "2.2"
 padding = 18
 installed_headline = "Installed version"
 color_start = "\033[1;33m"
 color_reset = "\033[0m"
+unimportant_keys = [
+    "Architecture",
+    "Groups",
+    "Provides",
+    "Depends On",
+    "Optional Deps",
+    "Conflicts With",
+    "Replaces",
+    "Packager",
+    "Build Date",
+    "Validated By",
+    "Repository"
+]
 
 # ARGUMENT PARSING
 ##########################
@@ -54,6 +67,7 @@ for pkg in pkg_installed.strip().split("\n"):
 
 staticrepo = ""
 ver_installed = ""
+belongs_to = ""  # in multiline values (used for remembering which key they belong to)
 
 os.makedirs(index_dir, exist_ok=True)
 with open(index_location, "w") as f:
@@ -66,9 +80,8 @@ with open(index_location, "w") as f:
                 value = line.strip()
                 formatted_line = form_alt.format(key=key, value=value, padding=padding)
             else:
-                line = [word.strip() for word in line.split(":")]
-                key = line[0]
-                value = "".join(line[1:])
+                key, value = [word.strip() for word in line.split(":", 1)]
+                belongs_to = key
                 formatted_line = form.format(key=key, value=value, padding=padding)
 
             if key == "Repository":
@@ -76,6 +89,9 @@ with open(index_location, "w") as f:
                 continue
 
             elif key == "Name":
+                if value == "":
+                    print(line)
+                    print(line.split(":")[0])
                 ver_installed = installed_dict.get(value, "[ Not Installed ]")
 
                 # PKG name
@@ -89,10 +105,13 @@ with open(index_location, "w") as f:
                 f.write(form.format(key=installed_headline, value=ver_installed, padding=padding))
 
             else:
+                if key in unimportant_keys or belongs_to in unimportant_keys:
+                    f.write("+")
                 f.write(formatted_line)
 
         # PKG repo to the end
-        f.write(staticrepo)
+        if "Repository" not in unimportant_keys:
+            f.write(staticrepo)
         f.write("\n")
 
 if "-q" not in sys.argv and "--quiet" not in sys.argv:

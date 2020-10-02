@@ -55,6 +55,10 @@ int db_traverse(FILE *db, uint8_t arg_opts, const regex_t *regexp) {
 		if (line_buf[0] == '-') {
 			bool installed = line_buf[1] - '0';
 			char *pkg_name = strtok(line_buf + 2, "\n");
+			// ignore invalid package names
+			if (pkg_name == NULL) {
+				continue;
+			}
 			pkg_print = regexec(regexp, pkg_name, 0, NULL, 0) == EXIT_SUCCESS;
 			if ((is_flag(arg_opts, FLAG_INST) && !installed) || (is_flag(arg_opts, FLAG_NOINST) && installed)) {
 				pkg_print = false;
@@ -65,12 +69,21 @@ int db_traverse(FILE *db, uint8_t arg_opts, const regex_t *regexp) {
 					   (installed) ? " [ installed ]" : "", COLOR_RESET);
 			}
 		} else if (pkg_print) {
+			char *print_from = line_buf;
+			if (line_buf[0] == '+'){
+				if (is_flag(arg_opts, FLAG_VERBOSE)) {
+					print_from++;
+				} else {
+					continue;
+				}
+			}
+
 			// test if last line
 			if (line_buf[0] == '\n') {
 				printf("\n");
 			} else {
-				printf("      %s%.*s%s%s%s", COLOR_LIGHTGREEN, indent_size, line_buf, COLOR_BOLD,
-					   line_buf + indent_size, COLOR_RESET);
+				printf("      %s%.*s%s%s%s", COLOR_LIGHTGREEN, indent_size, print_from, COLOR_BOLD,
+					   print_from + indent_size, COLOR_RESET);
 			}
 		}
 	}
