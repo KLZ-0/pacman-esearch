@@ -124,7 +124,7 @@ int parse_args(int argc, char **argv, uint8_t *arg_opts, char *pattern) {
 	if (is_flag(*arg_opts, FLAG_EXACT)) {
 		char *lastchar = memccpy(pattern + 1, tmp_pattern, '\0', PATTERN_LEN_MAX - 3);
 		if (lastchar == NULL) {
-			error("Pattern too long, set PATTERN_LEN_MAX in ('include/def.h') to an appropriate value and recompile esearch");
+			error("Pattern too long, set PATTERN_LEN_MAX in ('include/def.h') to an appropriate value and recompile esearch\n");
 			return EXIT_FAILURE;
 		}
 		pattern[0] = '^';
