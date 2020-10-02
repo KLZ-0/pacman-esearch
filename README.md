@@ -61,7 +61,7 @@ NOTE: the search index is stored in `$HOME/.cache/esearch/` on per-user basis so
 
 `--exact-match, -e` Show only exact match
 
-`--version, -v` Show version
+`--version, -V` Show version
 
 `--help, -h` Show help message
 
