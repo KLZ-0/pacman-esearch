@@ -1,7 +1,0 @@
-language: c
-
-sudo: required
-
-script:
-  - make
-  - sudo make install
