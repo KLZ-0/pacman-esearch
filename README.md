@@ -1,6 +1,6 @@
 # pacman-esearch
 
-[![Build Status](https://travis-ci.org/KLZ-0/pacman-esearch.svg?branch=master)](https://travis-ci.org/KLZ-0/pacman-esearch)
+[![Build Status](https://github.com/KLZ-0/pacman-esearch/workflows/CMake/badge.svg)](https://github.com/KLZ-0/pacman-esearch/actions/)
 [![AUR Status](https://img.shields.io/badge/AUR-esearch-blue.svg)](https://aur.archlinux.org/packages/esearch/)
 
 Print verbose information about packages matching a regular expression
