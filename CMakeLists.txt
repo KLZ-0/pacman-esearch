@@ -6,6 +6,4 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_FLAGS_DEBUG "-g -Wall -pedantic")
 set(CMAKE_C_FLAGS_RELEASE "-O2")
 
-include_directories(./include/)
-
-add_executable(esearch src/main.c src/error.c src/util.c src/database.c)
+add_subdirectory(src)
