@@ -7,6 +7,8 @@ Print verbose information about packages matching a regular expression
 
 Inspired by [https://github.com/fuzzyray/esearch](https://github.com/fuzzyray/esearch)
 
+[Example](.github/images/example.gif)
+
 # Features
 
 - Output and options similar to Gentoo esearch
