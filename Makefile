@@ -12,7 +12,6 @@ $(BUILD_DIR): CMakeLists.txt
 
 install: eupdatedb
 	$(MAKE) -C $(BUILD_DIR) install
-	cp $^ $(DESTDIR)$(INSTALL_DIR)/
 
 clean:
 	rm -rf $(BUILD_DIR)
