@@ -8,4 +8,4 @@ set(CMAKE_C_FLAGS_RELEASE "-O2")
 
 add_subdirectory(src)
 
-install(FILES "${PROJECT_SOURCE_DIR}/eupdatedb" DESTINATION bin)
+install(PROGRAMS "${PROJECT_SOURCE_DIR}/eupdatedb" DESTINATION bin)
